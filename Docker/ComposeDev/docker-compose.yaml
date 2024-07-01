@@ -28,7 +28,7 @@ services:
     image: library/postgres:14.7
     container_name: symfony2-postgres
     environment:
-      POSTGRES_DB: "test"
+      POSTGRES_DB: "app"
       POSTGRES_USER: "root"
       POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
