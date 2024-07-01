@@ -26,6 +26,10 @@ class Game
     #[ORM\JoinColumn(nullable: false)]
     private ?Team $teamLeft = null;
 
+    #[ORM\ManyToOne(inversedBy: 'games')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tour $tour = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +79,18 @@ class Game
     public function setTeamLeft(?Team $teamLeft): static
     {
         $this->teamLeft = $teamLeft;
+
+        return $this;
+    }
+
+    public function getTour(): ?Tour
+    {
+        return $this->tour;
+    }
+
+    public function setTour(?Tour $tour): static
+    {
+        $this->tour = $tour;
 
         return $this;
     }
