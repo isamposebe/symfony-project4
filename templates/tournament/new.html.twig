@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Team{% endblock %}
+
+{% block body %}
+    <h1>Create new Team</h1>
+
+    {# Форма для турнира #}
+    {{ include('_form.html.twig', {'form': formTournament}) }}
+
+    {# Форма для записи команд #}
+    {{ include('_form.html.twig', {'form': formTeam}) }}
+
+    <a href="{{ path('app_tournament') }}">back to list</a>
+
+{% endblock %}
