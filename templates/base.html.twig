@@ -10,6 +10,9 @@
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+        <?php use_javascript('jquery-3.7.1.min.js') ?>
+        <?php include_javascripts() ?>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     </head>
     <body>
         {# read and display just one flash message type #}
