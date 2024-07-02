@@ -6,6 +6,7 @@ use App\Entity\Team;
 use App\Form\TeamType;
 use App\Repository\TeamRepository;
 use App\Service\TeamService;
+use App\Service\TournamentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,11 +27,11 @@ class TeamController extends AbstractController
 
     /** Создание новой команды
      * @param Request $request Реквест для работы с формой
-     * @param TeamService $service Сервис работы с командой
+     * @param TournamentService $service Сервис работы с командой
      * @return Response
      */
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TeamService $service): Response
+    public function new(Request $request,TournamentService $service): Response
     {
         /** Создаем новую команду */
         $team = new Team();
@@ -41,10 +42,9 @@ class TeamController extends AbstractController
         /** Проверяем нажатие кнопки и валидность данных */
         if ($form->isSubmitted() && $form->isValid()) {
             /** Проверяем имя на повторы */
-            dump($service->identityVerification($team));
-            if ($service->identityVerification($team)){
+            if ($service->identityVerificationName(item: $team)){
                 /** Записываем в базу данных */
-                $service->addTeam($team);
+                $service->addItem($team);
                 $this->addFlash(
                     'notice',
                     'Your changes were saved!'
@@ -67,10 +67,10 @@ class TeamController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_team_delete', methods: ['POST'])]
-    public function delete(TeamService $service, Request $request, Team $team): Response
+    public function delete(TournamentService $service, Request $request, Team $team): Response
     {
         if ($this->isCsrfTokenValid('delete'.$team->getId(), $request->getPayload()->getString('_token'))) {
-             $service->deleteTeam($team);
+             $service->deleteItem($team);
         }
         return $this->redirectToRoute('app_team_index', [], Response::HTTP_SEE_OTHER);
     }
