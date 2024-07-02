@@ -50,16 +50,16 @@ class TournamentController extends AbstractController
                     'notice',
                     'Your changes were saved!'
                 );
-
+                return $this->redirectToRoute('app_tournament_show',[
+                    'id' => $tournament->getId(),
+                ]);
             }else{
                 $this->addFlash(
                     'notice',
                     'Турнир с таким именем уже существует'
                 );
             }
-            return $this->redirectToRoute('app_tournament_show',[
-                'id' => $tournament->getId(),
-            ]);
+
         }
 
 
