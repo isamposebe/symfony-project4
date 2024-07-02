@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
@@ -11,31 +12,46 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
-    #[ORM\Column]
-    private ?int $goalsScoredRight = null;
 
-    #[ORM\Column]
-    private ?int $goalsScoredLeft = null;
+    /** Количество голов правой команды
+     * @var int
+     */
+    #[ORM\Column(type: Integer::class, length: 255, nullable: false)]
+    private int $goalsScoredRight = 0;
 
-    #[ORM\ManyToOne(inversedBy: 'games')]
-    private ?Team $teamRight = null;
+    /** Количество голов левой команды
+     * @var int
+     */
+    #[ORM\Column(type: Integer::class, length: 255, nullable: false)]
+    private int $goalsScoredLeft = 0;
 
-    #[ORM\ManyToOne(inversedBy: 'games')]
+    /** Правая команда
+     * @var Team
+     */
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
+    private Team $teamRight;
+
+    /** Левая команда
+     * @var Team
+     */
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
+    private Team $teamLeft;
+
+    /** Тур игры
+     * @var Tour
+     */
+    #[ORM\ManyToOne(targetEntity: Tour::class, inversedBy: 'games')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Team $teamLeft = null;
-
-    #[ORM\ManyToOne(inversedBy: 'games')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Tour $tour = null;
+    private Tour $tour;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getGoalsScoredRight(): ?int
+    public function getGoalsScoredRight(): int
     {
         return $this->goalsScoredRight;
     }
@@ -47,7 +63,7 @@ class Game
         return $this;
     }
 
-    public function getGoalsScoredLeft(): ?int
+    public function getGoalsScoredLeft(): int
     {
         return $this->goalsScoredLeft;
     }
@@ -59,36 +75,36 @@ class Game
         return $this;
     }
 
-    public function getTeamRight(): ?Team
+    public function getTeamRight(): Team
     {
         return $this->teamRight;
     }
 
-    public function setTeamRight(?Team $teamRight): static
+    public function setTeamRight(Team $teamRight): static
     {
         $this->teamRight = $teamRight;
 
         return $this;
     }
 
-    public function getTeamLeft(): ?Team
+    public function getTeamLeft(): Team
     {
         return $this->teamLeft;
     }
 
-    public function setTeamLeft(?Team $teamLeft): static
+    public function setTeamLeft(Team $teamLeft): static
     {
         $this->teamLeft = $teamLeft;
 
         return $this;
     }
 
-    public function getTour(): ?Tour
+    public function getTour(): Tour
     {
         return $this->tour;
     }
 
-    public function setTour(?Tour $tour): static
+    public function setTour(Tour $tour): static
     {
         $this->tour = $tour;
 
