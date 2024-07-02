@@ -18,13 +18,13 @@ class Game
     /** Количество голов правой команды
      * @var int
      */
-    #[ORM\Column(type: Integer::class, length: 255, nullable: false)]
+    #[ORM\Column(type: 'integer', length: 255, nullable: false)]
     private int $goalsScoredRight = 0;
 
     /** Количество голов левой команды
      * @var int
      */
-    #[ORM\Column(type: Integer::class, length: 255, nullable: false)]
+    #[ORM\Column(type: 'integer', length: 255, nullable: false)]
     private int $goalsScoredLeft = 0;
 
     /** Правая команда
