@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TournamentType;
+use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,7 @@ class TournamentController extends AbstractController
      * @return Response
      */
     #[Route('/new', name: 'app_tournament_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request,TournamentService $service, EntityManagerInterface $entityManager): Response
     {
         /** Создаем турнир */
         $tournament = new Tournament();
@@ -41,8 +42,24 @@ class TournamentController extends AbstractController
         $formTournament->handleRequest($request);
 
         if ($formTournament->isSubmitted() && $formTournament->isValid()) {
-            $entityManager->persist($tournament);
-            $entityManager->flush();
+            /** Проверяем имя на повторы */
+            if ($service->identityVerificationName($tournament)){
+                /** Записываем в базу данных */
+                $service->addItem($tournament);
+                $this->addFlash(
+                    'notice',
+                    'Your changes were saved!'
+                );
+
+            }else{
+                $this->addFlash(
+                    'notice',
+                    'Турнир с таким именем уже существует'
+                );
+            }
+            return $this->redirectToRoute('app_tournament_show',[
+                'id' => $tournament->getId(),
+            ]);
         }
 
         /** Форма для регистрации команды на турнир */
