@@ -60,11 +60,21 @@ class TournamentService
         return $this->entityManager->getRepository(Tournament::class)->find($id);
     }
 
+    /** Добавление команды в турнир
+     * @param Team $team Данные команды
+     * @param Tournament $tournament Данные турнира
+     * @return void
+     */
+    public function addTeamTournament(Team $team, Tournament $tournament)
+    {
+
+    }
+
     /** Запрос на получение всех комментариев по определенной новости
      * @param Tournament $tournament
      * @return array Массив из сущностей Comment
      */
-    public function listTeamInNumTournament(Tournament $tournament): array
+    private function listTeamInNumTournament(Tournament $tournament): array
     {
         /** Получаем из базы данных список комментариев по новости */
         return $this->entityManager->getRepository(Team::class)->findBy(
