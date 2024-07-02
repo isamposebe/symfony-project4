@@ -27,11 +27,6 @@ class Tournament
     #[ORM\OneToMany(targetEntity: Tour::class, mappedBy: 'tornament')]
     private Tour $tours;
 
-    public function __construct()
-    {
-        $this->tours = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
