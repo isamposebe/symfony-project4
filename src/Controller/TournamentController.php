@@ -62,12 +62,23 @@ class TournamentController extends AbstractController
             ]);
         }
 
+
+        return $this->render('tournament/new.html.twig', [
+            'formTournament' => $formTournament
+        ]);
+    }
+    #[Route('/show/{id}', name: 'app_tournament_show')]
+    public function show(int $id, TournamentService $service,EntityManagerInterface $entityManager): Response
+    {
+        /** Найдем турнир по id */
+        $tournament = $service->searchTournamentID($id);;
+
         /** Форма для регистрации команды на турнир */
         $formTeam = $this->createForm(RecordingCommandType::class);
 
-        return $this->render('tournament/new.html.twig', [
-            'formTournament' => $formTournament,
-            'formTeam' => $formTeam
+        return $this->render('tournament/show.html.twig', [
+            'formTeam' => $formTeam,
+            'tournament' => $tournament
         ]);
     }
 }
