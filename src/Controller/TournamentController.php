@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Game;
+use App\Entity\Team;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TournamentType;
@@ -88,6 +90,19 @@ class TournamentController extends AbstractController
     #[Route('/addTeamTournament/', name: 'app_add_team_tournament')]
     public function addTeam(Request $request,TournamentService $service,EntityManagerInterface $entityManager): Response
     {
+        /** Получаем из request имя команды */
+        $team = new Team();
+        $team->setName($request->request->get('nameTeam'));
+
+        /** Проверяем что есть такая команда */
+        if ($service->identityVerificationName($team)){
+            return new Response('not Team', Response::HTTP_OK);
+        }
+
+
+
+
+
 
         return new Response('Add Team', Response::HTTP_OK);
     }
