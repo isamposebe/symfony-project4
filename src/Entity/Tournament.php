@@ -21,11 +21,6 @@ class Tournament
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private string $name;
 
-    /** Тур для турнира
-     * @var Tour
-     */
-    #[ORM\OneToMany(targetEntity: Tour::class, mappedBy: 'tornament')]
-    private Tour $tours;
 
     public function getId(): ?int
     {
