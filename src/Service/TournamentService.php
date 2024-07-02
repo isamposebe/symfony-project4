@@ -2,9 +2,13 @@
 
 namespace App\Service;
 
+use App\Entity\Game;
 use App\Entity\Team;
+use App\Entity\Tour;
 use App\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class TournamentService
 {
@@ -65,8 +69,29 @@ class TournamentService
      * @param Tournament $tournament Данные турнира
      * @return void
      */
-    public function addTeamTournament(Team $team, Tournament $tournament)
+    public function addTeamTournament(Team $team, Tournament $tournament): Response
     {
+        $game = new Game();
+        $tour = new Tour();
+
+        $tour->setTornament($tournament);
+        $tour->setName('Тур 1');
+
+        $game->setTour($tour);
+
+        if ($this->checkTeamRighLeft())
+        {
+            $game->setTeamRight($team);
+        }
+        else
+        {
+            $game->setTeamLeft($team);
+        }
+        //Отдельная функция
+
+        //Отдельная функция
+        $this->entityManager->persist($game);
+        $this->entityManager->flush();
 
     }
 
@@ -81,5 +106,12 @@ class TournamentService
             ['tournament' => $tournament],
             ['id' => 'DESC']
         );
+    }
+
+    private function checkTeamRighLeft():bool
+    {
+
+
+        return true;
     }
 }

@@ -31,6 +31,7 @@ class TournamentController extends AbstractController
 
     /**
      * @param Request $request
+     * @param TournamentService $service
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
@@ -98,13 +99,13 @@ class TournamentController extends AbstractController
         if ($service->identityVerificationName($team)){
             return new Response('not Team', Response::HTTP_OK);
         }
-
-        $game = new Game();
+        /** Получаем турнир по ID */
         $tournamentID = $request->request->get('tournamentID');
         $tournament = $service->searchTournamentID($tournamentID);
 
+        /** Записываем в базу данных добавление команды в турнир */
         $service->addTeamTournament($team, $tournament);
-        $game->setTeamLeft($team);
+
 
 
 
