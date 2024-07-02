@@ -6,7 +6,8 @@
     <h1>Show</h1>
 
     {# Форма для турнира #}
-    {{ tournament.name }}
+    <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
+
 
     {# Отоброжение новостей #}
     {% if listTeam is empty %}
@@ -30,11 +31,13 @@
         {# Отправка POST запроса для удалении комментария #}
         $( ".recordingTeam" ).click(function() {
             let nameTeam = $(".nameTeam").val();
+            let tournamentName = $('p').data( "tournament")
+            ;
             $.ajax({
                 url: '/tournament/addTeamTournament/', // не менял
                 method: 'POST',
                 dataType: 'html',
-                data: {nameTeam: nameTeam}, // Отправляю через data
+                data: {nameTeam: nameTeam, tournamentName: tournamentName}, // Отправляю через data
                 success: function (data) {
                     console.log(data);
                     $(this)
