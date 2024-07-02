@@ -24,7 +24,7 @@ class TournamentType extends AbstractType
                     ]),
                 ]])
             ->add('button', SubmitType::class, [
-                'label' => 'Записать команду',
+                'label' => 'Записать название турнира',
                 'attr' => ['class' => 'recordingTeam']
             ])
         ;
