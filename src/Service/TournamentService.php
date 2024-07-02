@@ -18,7 +18,7 @@ class TournamentService
     /** Проверка на идентичность (Проверяется Name)
      * - Поиск элемента по его классу (Team, Tournament, Tour, User)
      * @param $item - Данные элемента
-     * @return bool
+     * @return bool Если есть совпадения, то false, иначе true
      */
     public function identityVerificationName($item):bool
     {
@@ -51,9 +51,9 @@ class TournamentService
         $this->entityManager->flush();
     }
 
-    /** Поиск комментария по ID
-     * @param int $id ID комментария
-     * @return Tournament Получаем комментарий
+    /** Поиск турнира по ID
+     * @param int $id ID турнира
+     * @return Tournament Получаем турнир
      */
     public function searchTournamentID(int $id): Tournament
     {
