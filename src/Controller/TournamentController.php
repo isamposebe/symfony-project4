@@ -99,6 +99,13 @@ class TournamentController extends AbstractController
             return new Response('not Team', Response::HTTP_OK);
         }
 
+        $game = new Game();
+        $tournamentID = $request->request->get('tournamentID');
+        $tournament = $service->searchTournamentID($tournamentID);
+
+        $service->addTeamTournament($team, $tournament);
+        $game->setTeamLeft($team);
+
 
 
 
