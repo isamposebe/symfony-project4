@@ -3,16 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Team;
-use App\Form\NewsType;
 use App\Form\TeamType;
 use App\Repository\TeamRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\TeamService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/team')]
+#[IsGranted('ROLE_USER')]
 class TeamController extends AbstractController
 {
     #[Route('/', name: 'app_team_index', methods: ['GET'])]
@@ -23,21 +24,38 @@ class TeamController extends AbstractController
         ]);
     }
 
+    /** Создание новой команды
+     * @param Request $request Реквест для работы с формой
+     * @param TeamService $service Сервис работы с командой
+     * @return Response
+     */
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, TeamService $service): Response
     {
+        /** Создаем новую команду */
         $team = new Team();
+        /** Строим форму для регистрации команды */
         $form = $this->createForm(TeamType::class, $team);
         $form->handleRequest($request);
 
+        /** Проверяем нажатие кнопки и валидность данных */
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($team);
-            $entityManager->flush();
+            /** Проверяем имя на повторы */
+            dump($service->identityVerification($team));
+            if ($service->identityVerification($team)){
+                /** Записываем в базу данных */
+                $service->addTeam($team);
+                $this->addFlash(
+                    'notice',
+                    'Your changes were saved!'
+                );
+            }else{
+                $this->addFlash(
+                    'notice',
+                    'Команда с таким именем уже существует'
+                );
+            }
 
-            $this->addFlash(
-                'notice',
-                'Your changes were saved!'
-            );
             /** Пустая форма для повторного ввода*/
             $form = $this->createForm(TeamType::class, $team);
         }
@@ -49,13 +67,11 @@ class TeamController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_team_delete', methods: ['POST'])]
-    public function delete(Request $request, Team $team, EntityManagerInterface $entityManager): Response
+    public function delete(TeamService $service, Request $request, Team $team): Response
     {
         if ($this->isCsrfTokenValid('delete'.$team->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($team);
-            $entityManager->flush();
+             $service->deleteTeam($team);
         }
-
         return $this->redirectToRoute('app_team_index', [], Response::HTTP_SEE_OTHER);
     }
 }
