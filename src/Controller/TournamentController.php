@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Tournament;
+use App\Form\RecordingCommandType;
+use App\Form\TournamentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +34,23 @@ class TournamentController extends AbstractController
     #[Route('/new', name: 'app_tournament_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        /** Создаем турнир */
+        $tournament = new Tournament();
+        /** Создание формы турнира */
+        $formTournament = $this->createForm(TournamentType::class, $tournament);
+        $formTournament->handleRequest($request);
 
-        return $this->render('tournament/new.html.twig', []);
+        if ($formTournament->isSubmitted() && $formTournament->isValid()) {
+            $entityManager->persist($tournament);
+            $entityManager->flush();
+        }
+
+        /** Форма для регистрации команды на турнир */
+        $formTeam = $this->createForm(RecordingCommandType::class);
+
+        return $this->render('tournament/new.html.twig', [
+            'formTournament' => $formTournament,
+            'formTeam' => $formTeam
+        ]);
     }
 }
