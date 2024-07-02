@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240701145811 extends AbstractMigration
+final class Version20240702083622 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,10 @@ final class Version20240701145811 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SEQUENCE game_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE team_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE tour_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE tournament_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE game (id INT NOT NULL, team_right_id INT DEFAULT NULL, team_left_id INT NOT NULL, goals_scored_right INT NOT NULL, goals_scored_left INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE game (id INT NOT NULL, team_right_id INT DEFAULT NULL, team_left_id INT DEFAULT NULL, tour_id INT NOT NULL, goals_scored_right INT NOT NULL, goals_scored_left INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_232B318CECD5B44B ON game (team_right_id)');
         $this->addSql('CREATE INDEX IDX_232B318C1D15BF35 ON game (team_left_id)');
+        $this->addSql('CREATE INDEX IDX_232B318C15ED8D43 ON game (tour_id)');
         $this->addSql('CREATE TABLE team (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE tour (id INT NOT NULL, tornament_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6AD1F969CEEE0A5 ON tour (tornament_id)');
@@ -51,6 +47,7 @@ final class Version20240701145811 extends AbstractMigration
         $this->addSql('CREATE TRIGGER notify_trigger AFTER INSERT OR UPDATE ON messenger_messages FOR EACH ROW EXECUTE PROCEDURE notify_messenger_messages();');
         $this->addSql('ALTER TABLE game ADD CONSTRAINT FK_232B318CECD5B44B FOREIGN KEY (team_right_id) REFERENCES team (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE game ADD CONSTRAINT FK_232B318C1D15BF35 FOREIGN KEY (team_left_id) REFERENCES team (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE game ADD CONSTRAINT FK_232B318C15ED8D43 FOREIGN KEY (tour_id) REFERENCES tour (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE tour ADD CONSTRAINT FK_6AD1F969CEEE0A5 FOREIGN KEY (tornament_id) REFERENCES tournament (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
@@ -58,13 +55,9 @@ final class Version20240701145811 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP SEQUENCE game_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE team_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE tour_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE tournament_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318CECD5B44B');
         $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318C1D15BF35');
+        $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318C15ED8D43');
         $this->addSql('ALTER TABLE tour DROP CONSTRAINT FK_6AD1F969CEEE0A5');
         $this->addSql('DROP TABLE game');
         $this->addSql('DROP TABLE team');

@@ -13,28 +13,20 @@ class Tournament
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    /**
-     * @var Collection<int, Tour>
+    /** Наименование турнира
+     * @var string
      */
-    #[ORM\OneToMany(targetEntity: Tour::class, mappedBy: 'tornament')]
-    private Collection $tours;
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private string $name;
 
-    public function __construct()
-    {
-        $this->tours = new ArrayCollection();
-    }
-
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -74,5 +66,10 @@ class Tournament
         }
 
         return $this;
+    }
+
+    public function setTours(Tour $tours): void
+    {
+        $this->tours = $tours;
     }
 }

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Team{% endblock %}
+
+{% block body %}
+    <h1>Show</h1>
+
+    {# Форма для турнира #}
+    <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
+
+
+    {# Отоброжение новостей #}
+    {% if listTeam is empty %}
+        <p>Команд пока нет</p>
+    {% else %}
+        <ul>
+            {% for team in listTeam %}
+                <li>
+                    <p>{{ team.name }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    {# Форма для записи команд #}
+    {{ include('_form.html.twig', {'form': formTeam}) }}
+
+    <a href="{{ path('app_tournament') }}">back to list</a>
+    <script>
+        {# Отправка POST запроса для удалении комментария #}
+        $( ".recordingTeam" ).click(function() {
+            let nameTeam = $(".nameTeam").val();
+            let tournamentID = $('p').data( "tournament")
+            ;
+            $.ajax({
+                url: '/tournament/addTeamTournament/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
+                success: function (data) {
+                    console.log(data);
+                    $(this)
+                }
+            });
+        });
+
+        {# Отсеживание ошибок ajax #}
+        $(document).ajaxError(function(event, xhr, options) {
+
+            switch (xhr.status){
+
+                case 403:
+
+                    alert('Requested page forbidden (404).');
+
+                    break;
+
+                case 404:
+
+                    alert('Requested page not found (404).');
+
+                    break;
+
+                case 500:
+
+                    alert('Internal Server Error (500).');
+
+                    break;
+
+            }
+
+        });
+    </script>
+{% endblock %}

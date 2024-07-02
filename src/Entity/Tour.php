@@ -13,31 +13,37 @@ class Tour
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    #[ORM\ManyToOne(inversedBy: 'tours')]
-    private ?Tournament $tornament = null;
-
-    /**
-     * @var Collection<int, Game>
+    /** Название тура
+     * @var string
      */
-    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'tour')]
-    private Collection $games;
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private string $name;
+
+    /** Данные об турнире
+     * @var Tournament
+     */
+    #[ORM\ManyToOne(targetEntity: Tournament::class, inversedBy: 'tours')]
+    private Tournament $tornament;
+
+    /** Игра для турнира
+     * @var Game
+     */
+    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'tours')]
+    private Game $games;
 
     public function __construct()
     {
         $this->games = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -89,5 +95,10 @@ class Tour
         }
 
         return $this;
+    }
+
+    public function setGames(Game $games): void
+    {
+        $this->games = $games;
     }
 }
