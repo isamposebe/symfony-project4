@@ -26,5 +26,47 @@
     {{ include('_form.html.twig', {'form': formTeam}) }}
 
     <a href="{{ path('app_tournament') }}">back to list</a>
+    <script>
+        {# Отправка POST запроса для удалении комментария #}
+        $( ".recordingTeam" ).click(function() {
+            let nameTeam = $(".nameTeam").val();
+            $.ajax({
+                url: '/tournament/addTeamTournament/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {nameTeam: nameTeam}, // Отправляю через data
+                success: function (data) {
+                    console.log(data);
+                    $(this)
+                }
+            });
+        });
 
+        {# Отсеживание ошибок ajax #}
+        $(document).ajaxError(function(event, xhr, options) {
+
+            switch (xhr.status){
+
+                case 403:
+
+                    alert('Requested page forbidden (404).');
+
+                    break;
+
+                case 404:
+
+                    alert('Requested page not found (404).');
+
+                    break;
+
+                case 500:
+
+                    alert('Internal Server Error (500).');
+
+                    break;
+
+            }
+
+        });
+    </script>
 {% endblock %}

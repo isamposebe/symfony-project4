@@ -84,4 +84,11 @@ class TournamentController extends AbstractController
             'listTeam' => $listTeam
         ]);
     }
+
+    #[Route('/addTeamTournament/', name: 'app_add_team_tournament')]
+    public function addTeam(Request $request,TournamentService $service,EntityManagerInterface $entityManager): Response
+    {
+
+        return new Response('Add Team', Response::HTTP_OK);
+    }
 }
