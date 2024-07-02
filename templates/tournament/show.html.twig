@@ -8,6 +8,20 @@
     {# Форма для турнира #}
     {{ tournament.name }}
 
+    {# Отоброжение новостей #}
+    {% if listTeam is empty %}
+        <p>Команд пока нет</p>
+    {% else %}
+        <ul>
+            {% for team in listTeam %}
+                <li>
+                    <p>{{ team.name }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
     {# Форма для записи команд #}
     {{ include('_form.html.twig', {'form': formTeam}) }}
 

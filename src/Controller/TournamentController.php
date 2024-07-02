@@ -73,12 +73,15 @@ class TournamentController extends AbstractController
         /** Найдем турнир по id */
         $tournament = $service->searchTournamentID($id);;
 
+        $listTeam = [];
+
         /** Форма для регистрации команды на турнир */
         $formTeam = $this->createForm(RecordingCommandType::class);
 
         return $this->render('tournament/show.html.twig', [
             'formTeam' => $formTeam,
-            'tournament' => $tournament
+            'tournament' => $tournament,
+            'listTeam' => $listTeam
         ]);
     }
 }

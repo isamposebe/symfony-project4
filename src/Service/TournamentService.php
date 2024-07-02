@@ -59,4 +59,17 @@ class TournamentService
     {
         return $this->entityManager->getRepository(Tournament::class)->find($id);
     }
+
+    /** Запрос на получение всех комментариев по определенной новости
+     * @param Tournament $tournament
+     * @return array Массив из сущностей Comment
+     */
+    public function listTeamInNumTournament(Tournament $tournament): array
+    {
+        /** Получаем из базы данных список комментариев по новости */
+        return $this->entityManager->getRepository(Team::class)->findBy(
+            ['tournament' => $tournament],
+            ['id' => 'DESC']
+        );
+    }
 }
