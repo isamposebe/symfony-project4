@@ -8,13 +8,17 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+
+
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/src/Controller/TournamentController.php</code></li>
-        <li>Your template at <code>/var/www/templates/tournament/index.html.twig</code></li>
-    </ul>
+    <button onclick="window.location='{{ path('app_team_new') }}'" class="btn" type="submit">
+        Создать команду
+    </button>
+    <button onclick="window.location='{{ path('app_tournament_new') }}'" class="btn" type="submit">
+        Создать турнир
+    </button>
+
 </div>
 {% endblock %}
