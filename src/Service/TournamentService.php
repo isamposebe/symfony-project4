@@ -61,6 +61,15 @@ class TournamentService
     {
         return $this->entityManager->getRepository(Tournament::class)->find($id);
     }
+    /** Поиск турнира по ID
+     * @param int $id ID турнира
+     * @return Tournament Получаем турнир
+     */
+    public function searchTeam($nameTeam): Team
+    {
+        $trams = $this->entityManager->getRepository(Team::class)->findBy(['name' => $nameTeam]);
+        return $trams[0];
+    }
 
     /** Запрос на получение всех комментариев по определенной новости
      * @param Tournament $tournament
@@ -78,22 +87,22 @@ class TournamentService
     /** Добавление команды в турнир
      * @param Team $team Данные команды
      * @param Tournament $tournament Данные турнира
-     * @return Tour Данные первого тура
+     * @return Game Данные Игры
      */
-    public function addTeamTournament(Team $team, Tournament $tournament): Tour
+    public function addTeamTournament(Team $team,Game $game, Tournament $tournament): Game
     {
+        /** Создаем тур */
         $strNameTour = 'Тур 1';
         $tour = $this->addTour($tournament, $strNameTour);
 
-        $game = new Game();
+        /** Заполняем в игру команду */
+        //$game = $this->addGame($team, $game, $tour);
+        $game->setTeamRight($team);
+        $game->setTeamLeft($team);
+        $game->setTour($tour);
+        $this->addItem($game);
 
-
-        $game = $this->addGame($team, $game, $tour);
-
-        $this->entityManager->persist($game);
-        $this->entityManager->flush();
-
-        return $tour;
+        return $game;
     }
 
     /** Добавляем в базу данных тур или берем его из базы
@@ -129,9 +138,10 @@ class TournamentService
     private function addGame(Team $team, Game $game, Tour $tour):Game
     {
         $game->setTour($tour);
+
         /** Берем всех игр по tour */
         $listGame = $this->entityManager->getRepository(Game::class)->findBy([
-            'tour' => $game->getTour(),
+            'tour' => $tour,
         ]);
 
         /** Если есть игра с командой $team, то вытаскиваем эту игру */
@@ -142,12 +152,27 @@ class TournamentService
     {
         /** Если есть игра с командой $team, то вытаскиваем эту игру */
         foreach ($listGame as $item) {
-            if ($item->getTeamLeft() === $team ){
-                $game = $item;
-            }
-            else{
-                if ($item->getTeamRight() === $team){
+            /** Проверяю заполнена ли игра */
+            if ($this->checkGameFull($item)){
+                if ($item->getTeamLeft() === $team ){
                     $game = $item;
+                }
+                else{
+                    if ($item->getTeamRight() == $team) {
+                        $game = $item;
+                    }
+                }
+            }else{
+                /** Если не заполнена, то заполняю  */
+                if ($item->getTeamLeft() == null ){
+                    $game->setTeamLeft($team);
+                    return $game;
+                }
+                else{
+                    if ($item->getTeamRight() == null) {
+                        $game->setTeamRight($team);
+                        return $game;
+                    }
                 }
             }
         }
