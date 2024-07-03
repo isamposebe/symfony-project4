@@ -95,7 +95,12 @@ class TournamentController extends AbstractController
         $team = new Team();
         $nameTeam = $request->request->get('nameTeam');
 
+        /** Проверяем что есть такая команда */
+        if ($service->identityVerificationName($team->setName($nameTeam))){
+            return new Response('not Team', Response::HTTP_OK);
+        }
         $team = $service->searchTeam($nameTeam);
+
 
         /** Получаем турнир по ID */
         $tournamentID = $request->request->get('tournamentID');
