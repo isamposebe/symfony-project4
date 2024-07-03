@@ -24,13 +24,8 @@ class Tour
      * @var Tournament
      */
     #[ORM\ManyToOne(targetEntity: Tournament::class, inversedBy: 'tours')]
-    private Tournament $tornament;
+    private Tournament $tournament;
 
-    /** Игра для турнира
-     * @var Game
-     */
-    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'tours')]
-    private Game $games;
 
 
     public function getId(): int
@@ -50,50 +45,17 @@ class Tour
         return $this;
     }
 
-    public function getTornament(): Tournament
+    public function getTournament(): Tournament
     {
-        return $this->tornament;
+        return $this->tournament;
     }
 
-    public function setTornament(Tournament $tornament): static
+    public function setTournament(Tournament $tournament): static
     {
-        $this->tornament = $tornament;
+        $this->tournament = $tournament;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
 
-    public function addGame(Game $game): static
-    {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->setTour($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGame(Game $game): static
-    {
-        if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
-            if ($game->getTour() === $this) {
-                $game->setTour(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function setGames(Game $games): void
-    {
-        $this->games = $games;
-    }
 }
