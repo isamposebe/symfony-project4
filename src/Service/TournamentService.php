@@ -100,23 +100,20 @@ class TournamentService
         /** Создаем новый первый тур */
         $strNameTour = 'Тур 1';
         $tour = new Tour();
+        $tour->setTournament($tournament);
 
         /** Берем всех туров по tournament */
         $listTour = $this->entityManager->getRepository(Tour::class)->findBy(['tournament' => $tournament]);
 
         foreach ($listTour as $item) {
             /** Проверяем на существование в базе данных тура */
-            if ($item->getName() == $strNameTour){
-                $tour = $item;
-            }
-            else{
-                $tour->setTornament($tournament);
-                $tour->setName($strNameTour);
-                $this->entityManager->persist($tour);
-                $this->entityManager->flush();
+            if ($item->getName() === $strNameTour) {
+                return $item;
             }
         }
-
+        $tour->setName($strNameTour);
+        $this->entityManager->persist($tour);
+        $this->entityManager->flush();
         return $tour;
     }
 
