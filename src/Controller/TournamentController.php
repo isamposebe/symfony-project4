@@ -93,25 +93,20 @@ class TournamentController extends AbstractController
     {
         /** Получаем из request имя команды */
         $team = new Team();
-        $team->setName($request->request->get('nameTeam'));
+        $nameTeam = $request->request->get('nameTeam');
 
-        /** Проверяем что есть такая команда */
-        if ($service->identityVerificationName($team)){
-            return new Response('not Team', Response::HTTP_OK);
-        }
+        $team = $service->searchTeam($nameTeam);
+
         /** Получаем турнир по ID */
         $tournamentID = $request->request->get('tournamentID');
         $tournament = $service->searchTournamentID($tournamentID);
 
+        $game = new Game();
         /** Записываем в базу данных добавление команды в турнир */
-        $service->addTeamTournament($team, $tournament);
-
-
-
-
-
-
-
+        $game = $service->addTeamTournament($team, $game, $tournament);
+        dump($tournament);
+        dump($team);
+        dump($game);
         return new Response('Add Team', Response::HTTP_OK);
     }
 }
