@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\GameRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
+
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
@@ -13,7 +13,6 @@ class Game
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
-
 
     /** Количество голов правой команды
      * @var int
@@ -31,13 +30,13 @@ class Game
      * @var Team|Null
      */
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
-    private Team|Null $teamRight;
+    private ?Team $teamRight = null;
 
     /** Левая команда
      * @var Team|Null
      */
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
-    private Team|Null $teamLeft;
+    private ?Team $teamLeft = null;
 
     /** Тур игры
      * @var Tour
