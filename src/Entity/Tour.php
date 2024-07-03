@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TourRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,10 +32,6 @@ class Tour
     #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'tours')]
     private Game $games;
 
-    public function __construct()
-    {
-        $this->games = new ArrayCollection();
-    }
 
     public function getId(): int
     {
@@ -55,12 +50,12 @@ class Tour
         return $this;
     }
 
-    public function getTornament(): ?Tournament
+    public function getTornament(): Tournament
     {
         return $this->tornament;
     }
 
-    public function setTornament(?Tournament $tornament): static
+    public function setTornament(Tournament $tornament): static
     {
         $this->tornament = $tornament;
 
