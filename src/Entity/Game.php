@@ -28,16 +28,16 @@ class Game
     private int $goalsScoredLeft = 0;
 
     /** Правая команда
-     * @var Team
+     * @var Team|Null
      */
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
-    private Team $teamRight;
+    private Team|Null $teamRight;
 
     /** Левая команда
-     * @var Team
+     * @var Team|Null
      */
     #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'games')]
-    private Team $teamLeft;
+    private Team|Null $teamLeft;
 
     /** Тур игры
      * @var Tour
@@ -75,29 +75,6 @@ class Game
         return $this;
     }
 
-    public function getTeamRight(): Team
-    {
-        return $this->teamRight;
-    }
-
-    public function setTeamRight(Team $teamRight): static
-    {
-        $this->teamRight = $teamRight;
-
-        return $this;
-    }
-
-    public function getTeamLeft(): Team
-    {
-        return $this->teamLeft;
-    }
-
-    public function setTeamLeft(Team $teamLeft): static
-    {
-        $this->teamLeft = $teamLeft;
-
-        return $this;
-    }
 
     public function getTour(): Tour
     {
@@ -109,5 +86,25 @@ class Game
         $this->tour = $tour;
 
         return $this;
+    }
+
+    public function getTeamRight(): ?Team
+    {
+        return $this->teamRight;
+    }
+
+    public function setTeamRight(?Team $teamRight): void
+    {
+        $this->teamRight = $teamRight;
+    }
+
+    public function getTeamLeft(): ?Team
+    {
+        return $this->teamLeft;
+    }
+
+    public function setTeamLeft(?Team $teamLeft): void
+    {
+        $this->teamLeft = $teamLeft;
     }
 }
