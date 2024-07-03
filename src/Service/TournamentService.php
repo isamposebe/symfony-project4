@@ -71,6 +71,7 @@ class TournamentService
         return $trams[0];
     }
 
+
     /** Запрос на получение всех комментариев по определенной новости
      * @param Tournament $tournament
      * @return array Массив из сущностей Comment
@@ -89,20 +90,14 @@ class TournamentService
      * @param Tournament $tournament Данные турнира
      * @return Game Данные Игры
      */
-    public function addTeamTournament(Team $team,Game $game, Tournament $tournament): Game
+    public function addTeamTournament(Team $team, Tournament $tournament): Game
     {
         /** Создаем тур */
         $strNameTour = 'Тур 1';
         $tour = $this->addTour($tournament, $strNameTour);
 
         /** Заполняем в игру команду */
-        //$game = $this->addGame($team, $game, $tour);
-        $game->setTeamRight($team);
-        $game->setTeamLeft($team);
-        $game->setTour($tour);
-        $this->addItem($game);
-
-        return $game;
+        return $this->addGame($team, $tour);
     }
 
     /** Добавляем в базу данных тур или берем его из базы
@@ -135,62 +130,53 @@ class TournamentService
      * @param Tour $tour Данные тура
      * @return Game Данные игры
      */
-    private function addGame(Team $team, Game $game, Tour $tour):Game
+    private function addGame(Team $team, Tour $tour):Game
     {
-        $game->setTour($tour);
+        $game = new Game();
 
         /** Берем всех игр по tour */
         $listGame = $this->entityManager->getRepository(Game::class)->findBy([
             'tour' => $tour,
         ]);
 
-        /** Если есть игра с командой $team, то вытаскиваем эту игру */
-        return $this->checkTeamGame($team, $listGame, $game);
-    }
-
-    private function checkTeamGame(Team $team, array $listGame, Game $game):Game
-    {
-        /** Если есть игра с командой $team, то вытаскиваем эту игру */
-        foreach ($listGame as $item) {
-            /** Проверяю заполнена ли игра */
-            if ($this->checkGameFull($item)){
-                if ($item->getTeamLeft() === $team ){
-                    $game = $item;
-                }
-                else{
-                    if ($item->getTeamRight() == $team) {
-                        $game = $item;
-                    }
-                }
-            }else{
-                /** Если не заполнена, то заполняю  */
+        if (!$this->checkTeamGame($team, $listGame) ){
+            foreach ($listGame as $item) {
                 if ($item->getTeamLeft() == null ){
+                    $game = $item;
                     $game->setTeamLeft($team);
+                    $this->addItem($game);
+                    return $game;
+                }elseif ($item->getTeamRight() == null ){
+                    $game = $item;
+                    $game->setTeamRight($team);
+                    $this->addItem($game);
                     return $game;
                 }
-                else{
-                    if ($item->getTeamRight() == null) {
-                        $game->setTeamRight($team);
-                        return $game;
-                    }
-                }
             }
+            $game->setTour($tour);
+            $game->setTeamLeft($team);
+            $this->addItem($game);
         }
         return $game;
     }
 
-    /** Проверка заполнения игры
-     * @return bool Если не заполнена, то false иначе true
-     */
-    private function checkGameFull(Game $game):bool
+    private function checkTeamGame(Team $team, array $listGame): bool
     {
-        if ($game->getTeamLeft() == Null){
-            return false;
-        }else{
-            if ($game->getTeamRight() == Null){
-                return false;
+        /** Если есть игра с командой $team, то вытаскиваем эту игру */
+        foreach ($listGame as $item) {
+            if ($item->getTeamLeft() != null){
+                if ($item->getTeamLeft()->getName() === $team->getName()){
+                    return true;
+                }
+            }
+            if ($item->getTeamRight() != null){
+                if ($item->getTeamRight()->getName() === $team->getName())
+                {
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
+
 }
