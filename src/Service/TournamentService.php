@@ -7,10 +7,6 @@ use App\Entity\Team;
 use App\Entity\Tour;
 use App\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\Null_;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Response;
-
 
 class TournamentService
 {
