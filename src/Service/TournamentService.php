@@ -8,6 +8,7 @@ use App\Entity\Tour;
 use App\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Null_;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -17,7 +18,7 @@ class TournamentService
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager
     ){}
 
     /** Проверка на идентичность (Проверяется Name)
@@ -85,9 +86,17 @@ class TournamentService
      */
     public function addTeamTournament(Team $team, Tournament $tournament): Tour
     {
-        $tour = $this->addOneTour($tournament);
+        $strNameTour = 'Тур 1';
+        $tour = $this->addTour($tournament, $strNameTour);
 
-        $this->addGame($team, $tour);
+        $game = new Game();
+
+
+        $game = $this->addGame($team, $game, $tour);
+
+        $this->entityManager->persist($game);
+        $this->entityManager->flush();
+
         return $tour;
     }
 
@@ -95,10 +104,9 @@ class TournamentService
      * @param Tournament $tournament Данные турнира
      * @return Tour Данные первого тура
      */
-    private function addOneTour(Tournament $tournament):Tour
+    private function addTour(Tournament $tournament, $strNameTour):Tour
     {
         /** Создаем новый первый тур */
-        $strNameTour = 'Тур 1';
         $tour = new Tour();
         $tour->setTournament($tournament);
 
@@ -122,47 +130,46 @@ class TournamentService
      * @param Tour $tour Данные тура
      * @return Game Данные игры
      */
-    private function addGame(Team $team, Tour $tour):Game
+    private function addGame(Team $team, Game $game, Tour $tour):Game
     {
-        $game = new Game();
         $game->setTour($tour);
-
-        /** Берем всех туров по tournament */
+        /** Берем всех игр по tour */
         $listGame = $this->entityManager->getRepository(Game::class)->findBy([
-            'tour' => $tour,
+            'tour' => $game->getTour(),
         ]);
+
+        /** Если есть игра с командой $team, то вытаскиваем эту игру */
+        return $this->checkTeamGame($team, $listGame, $game);
+    }
+
+    private function checkTeamGame(Team $team, array $listGame, Game $game):Game
+    {
         /** Если есть игра с командой $team, то вытаскиваем эту игру */
         foreach ($listGame as $item) {
-            /** Проверяем на существование в базе данных тура */
             if ($item->getTeamLeft() === $team ){
-                return $item;
+                $game = $item;
             }
             else{
                 if ($item->getTeamRight() === $team){
-                    return $item;
-                }
-            }
-        }
-        /** Записываем игру в свободные элементы */
-        foreach ($listGame as $item) {
-            //Возможно надо удалять элементы
-            if ($item->getTeamLeft() === Null){
-                $item->setTeamLeft($team);
-                $game = $item;
-            }else{
-                if ($item->getTeamRight() === Null){
-                    $item->setTeamRight($team);
                     $game = $item;
                 }
-                else{
-                    $game->setTeamLeft($team);
-                }
             }
         }
-        /** Записываем в базу данных игру*/
-        $this->entityManager->persist($game);
-        $this->entityManager->flush();
-
         return $game;
+    }
+
+    /** Проверка заполнения игры
+     * @return bool Если не заполнена, то false иначе true
+     */
+    private function checkGameFull(Game $game):bool
+    {
+        if ($game->getTeamLeft() == Null){
+            return false;
+        }else{
+            if ($game->getTeamRight() == Null){
+                return false;
+            }
+        }
+        return true;
     }
 }
