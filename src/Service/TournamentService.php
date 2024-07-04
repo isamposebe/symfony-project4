@@ -34,7 +34,7 @@ class TournamentService
     }
 
     /** Удаление элемента из базы данных
-     * @param Team $item Данные элемента
+     * @param $item - Данные элемента
      * @return void
      */
     function deleteItem($item):void
@@ -44,7 +44,7 @@ class TournamentService
     }
 
     /** Добавляет элемент в базу данных
-     * @param Team $item Данные элемента
+     * @param $item - Данные элемента
      * @return void
      */
     function addItem($item):void
@@ -140,7 +140,7 @@ class TournamentService
         $listGame = $this->entityManager->getRepository(Game::class)->findBy([
             'tour' => $tour,
         ]);
-
+        /** Проверки на дублирование команды в турнире */
         if (!$this->checkTeamGame($team, $listGame) ){
             foreach ($listGame as $item) {
                 if ($item->getTeamLeft() == null ){
@@ -162,6 +162,11 @@ class TournamentService
         return $game;
     }
 
+    /** Проверка команды в играх
+     * @param Team $team Данные команды
+     * @param array $listGame Список игр
+     * @return bool Если нашел команду, то true иначе false
+     */
     private function checkTeamGame(Team $team, array $listGame): bool
     {
         /** Если есть игра с командой $team, то вытаскиваем эту игру */
@@ -180,5 +185,4 @@ class TournamentService
         }
         return false;
     }
-
 }
