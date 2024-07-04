@@ -157,13 +157,16 @@ class TournamentController extends AbstractController
         return new Response( $team->getName(), Response::HTTP_OK);
     }
 
-    #[Route('/delete/game/', name: 'app_Game_delete')]
-    public function deleteGame(Request $request, TournamentService $service): Response
+    #[Route('/delete/{id}', name: 'app_tournament_delete')]
+    public function delete(Request $request, TournamentService $service, Tournament $tournament): Response
     {
-        $idGame = $request->request->get('gemeID');
-        $game = $service->searchGameByID($idGame);
-        $service->deleteItem($game);
-        return new Response($idGame, Response::HTTP_OK);
 
+
+        /** Проверяем новость которую надо удалить */
+        if ($this->isCsrfTokenValid('delete'.$tournament->getId(), $request->getPayload()->getString('_token')))
+        {
+            $service->deleteItem($tournament);
+        }
+        return new Response( Response::HTTP_OK);
     }
 }
