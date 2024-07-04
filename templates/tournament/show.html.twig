@@ -9,7 +9,9 @@
     <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
 
     <p>{{ tour.name }}</p>
-    <button>Удалить турнир</button>
+    {# Кнопка удалить форму #}
+    {{ include('delete_form.html.twig',{'tournament': tournament }) }}
+
     <button>Добавить тур</button>
     {# Отоброжение новостей #}
     {% if listGame is empty %}
