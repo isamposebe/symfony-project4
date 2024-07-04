@@ -13,7 +13,7 @@
     {{ include('delete_form.html.twig',{'tournament': tournament }) }}
 
     <button>Добавить тур</button>
-    {# Отоброжение новостей #}
+    {# Отоброжение игр #}
     {% if listGame is empty %}
         <p>Игр пока нет</p>
     {% else %}
@@ -21,22 +21,26 @@
             <thead>
             <tr>
                 <th>Игра № </th>
-                <th>Команды</th>
-                <th>Голы</th>
+                <th>Команда 1</th>
+                <th>Голы Команды 1</th>
+                <th>Команда 2</th>
+                <th>Голы Команды 2</th>
+                <th>Изменить значение голов</th>
+                <th>Удаление игры</th>
             </tr>
             </thead>
             <tbody>
             {% for game in listGame %}
                 <tr data-game="{{ game.id }}" >
                     <th>{{ game.id }}</th>
-                    <td>
+
                         {% if game.TeamLeft != null %}
-                                <p>{{ game.TeamLeft.name }}</p>
+                            <td>{{ game.TeamLeft.name }}</td> <td>{{ game.goalsScoredLeft }}</td>
                         {% endif %}
                         {% if game.TeamRight != null %}
-                            <p>{{ game.TeamRight.name }}</p>
+                            <td>{{ game.TeamRight.name }}</td> <td>{{ game.goalsScoredRight }}</td>
                         {% endif %}
-                    </td>
+
                     <td>
                         <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
                     </td>
