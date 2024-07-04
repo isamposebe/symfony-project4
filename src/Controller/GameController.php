@@ -41,8 +41,10 @@ class GameController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
+            $form = $this->createForm(GameType::class);
+            return $this->redirectToRoute('app_tournament_show', [
+                'id' => $game->getTour()->getTournament()->getId(),
+            ], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('game/edit.html.twig', [
