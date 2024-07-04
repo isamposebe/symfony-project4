@@ -7,6 +7,7 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TournamentType;
 use App\Service\TournamentService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,14 +19,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class TournamentController extends AbstractController
 {
     /** Главная страница турнира
+     * @param $entityManager
      * @return Response
      */
     #[Route('/', name: 'app_tournament')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        /** Сортируем по дате (Возможно выкинуть в сервис)*/
+        $tournamentList = $entityManager->getRepository(Tournament::class);
+        $tournamentList = $tournamentList->findAll();
         return $this->render('tournament/index.html.twig', [
             'controller_name' => 'TournamentController',
-        ]);
+            'tournamentList' => $tournamentList,
+            ]);
     }
 
     /**
@@ -151,12 +157,8 @@ class TournamentController extends AbstractController
         $tournament = $service->searchTournamentID($tournamentID);
 
         /** Записываем в базу данных добавление команды в турнир */
-        $game = $service->addTeamTournament($team, $tournament);
+        $service->addTeamTournament($team, $tournament);
 
-        return new Response('Add Team '
-            . ' TeamRight: ' . $game->getTeamRight()->getName()
-            . ' TeamLeft: ' .$game->getTeamLeft()->getName()
-            . ' tournament: ' . $tournament->getName()
-            , Response::HTTP_OK);
+        return new Response( $team->getName(), Response::HTTP_OK);
     }
 }
