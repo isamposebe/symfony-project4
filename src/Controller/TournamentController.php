@@ -140,7 +140,7 @@ class TournamentController extends AbstractController
 
         /** Проверяем что есть такая команда */
         if ($service->identityVerificationName($team->setName($nameTeam))){
-            return new Response('not Team', Response::HTTP_OK);
+            return new Response('Нету такой команды', Response::HTTP_OK);
         }
 
         /** Ищем команду по имени и возвращаем команду из базы данных */
