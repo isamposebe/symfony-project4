@@ -146,9 +146,7 @@ class TournamentService
         $game = new Game();
 
         /** Берем всех игр по tour */
-        $listGame = $this->entityManager->getRepository(Game::class)->findBy([
-            'tour' => $tour,
-        ]);
+        $listGame = $this->listGame($tour);
         /** Проверки на дублирование команды в турнире */
         if (!$this->checkTeamGame($team, $listGame) ){
             foreach ($listGame as $item) {
