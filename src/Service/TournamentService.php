@@ -61,22 +61,23 @@ class TournamentService
     {
         return $this->entityManager->getRepository(Tournament::class)->find($id);
     }
-    /** Поиск турнира по ID
-     * @param int $id ID турнира
-     * @return Tournament Получаем турнир
+
+    /** Поиск команды по имени
+     * @param string $nameTeam Название команды
+     * @return Team Получаем команду из базы данных
      */
-    public function searchTeam($nameTeam): Team
+    public function searchTeam(string $nameTeam): Team
     {
         $trams = $this->entityManager->getRepository(Team::class)->findBy(['name' => $nameTeam]);
         return $trams[0];
     }
 
 
-    /** Запрос на получение всех комментариев по определенной новости
-     * @param Tournament $tournament
-     * @return array Массив из сущностей Comment
+    /** Запрос на получение всех Туров по определенному турниру
+     * @param Tournament $tournament Данные турнира
+     * @return array Массив из сущностей Tour
      */
-    private function listTourNumTournament(Tournament $tournament): array
+    public function listTourNumTournament(Tournament $tournament): array
     {
         /** Получаем из базы данных список комментариев по новости */
         return $this->entityManager->getRepository(Tour::class)->findBy(
@@ -85,7 +86,7 @@ class TournamentService
         );
     }
 
-    /** Добавление команды в турнир
+    /** Добавление команды в турнир и первый тур
      * @param Team $team Данные команды
      * @param Tournament $tournament Данные турнира
      * @return Game Данные Игры
@@ -93,8 +94,8 @@ class TournamentService
     public function addTeamTournament(Team $team, Tournament $tournament): Game
     {
         /** Создаем тур */
-        $strNameTour = 'Тур 1';
-        $tour = $this->addTour($tournament, $strNameTour);
+        $nameTour = 'Тур 1';
+        $tour = $this->addTour($tournament, $nameTour);
 
         /** Заполняем в игру команду */
         return $this->addGame($team, $tour);
@@ -104,7 +105,7 @@ class TournamentService
      * @param Tournament $tournament Данные турнира
      * @return Tour Данные первого тура
      */
-    private function addTour(Tournament $tournament, $strNameTour):Tour
+    private function addTour(Tournament $tournament, string $nameTour):Tour
     {
         /** Создаем новый первый тур */
         $tour = new Tour();
@@ -115,11 +116,11 @@ class TournamentService
 
         foreach ($listTour as $item) {
             /** Проверяем на существование в базе данных тура */
-            if ($item->getName() === $strNameTour) {
+            if ($item->getName() == $nameTour) {
                 return $item;
             }
         }
-        $tour->setName($strNameTour);
+        $tour->setName($nameTour);
         $this->entityManager->persist($tour);
         $this->entityManager->flush();
         return $tour;
