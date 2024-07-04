@@ -90,8 +90,24 @@ class TournamentController extends AbstractController
         /** Найдем турнир по id */
         $tournament = $service->searchTournamentID($id);;
 
-        /** Список команды в турнире */
-        $listTeam = $service->listTourNumTournament($tournament);
+        $listTour = $service->listTourNumTournament($tournament);
+        foreach ($listTour as $item) {
+            if ($item->getName() == 'Тур 1'){
+                $tour = $item;
+            }
+        }
+
+        $listGame = $service->listGame($tour);
+        foreach ($listGame as $game) {
+            if ($game->getTeamLeft() != null){
+                $listTeam[] = $game->getTeamLeft()->getName();
+            }
+            if ($game->getTeamRight() != null){
+                $listTeam[] = $game->getTeamRight()->getName();
+            }
+        }
+        /** Список команд в турнире */
+
 
         /** Форма для регистрации команды на турнир */
         $formTeam = $this->createForm(RecordingCommandType::class);
@@ -104,7 +120,8 @@ class TournamentController extends AbstractController
         return $this->render('tournament/show.html.twig', [
             'formTeam' => $formTeam,
             'tournament' => $tournament,
-            'listTeam' => $listTeam
+            'listTeam' => $listTeam,
+            'tour' => $tour
         ]);
     }
 

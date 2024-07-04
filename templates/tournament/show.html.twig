@@ -8,6 +8,7 @@
     {# Форма для турнира #}
     <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
 
+    <p>{{ tour.name }}</p>
 
     {# Отоброжение новостей #}
     {% if listTeam is empty %}
@@ -15,8 +16,8 @@
     {% else %}
         <ul>
             {% for team in listTeam %}
-                <li>
-                    <p>{{ team.name }}</p>
+                <li class="team">
+                    <p>{{ team }}</p>
                 </li>
             {% endfor %}
         </ul>
@@ -39,8 +40,10 @@
                 dataType: 'html',
                 data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
                 success: function (data) {
-                    console.log(data);
-                    $(this)
+                    if ($('p:last').html() !== data){
+                        $('p:last').append( "<li><p>" + data + "</p></li>" );
+                    }
+                    console.log($('p:last').html());
                 }
             });
         });
