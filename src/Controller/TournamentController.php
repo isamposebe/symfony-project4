@@ -7,7 +7,6 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TournamentType;
 use App\Service\TournamentService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -135,7 +134,12 @@ class TournamentController extends AbstractController
         $tournament = $service->searchTournamentID($tournamentID);
 
         /** Записываем в базу данных добавление команды в турнир */
-        $service->addTeamTournament($team, $tournament);
-        return new Response('Add Team', Response::HTTP_OK);
+        $game = $service->addTeamTournament($team, $tournament);
+
+        return new Response('Add Team '
+            . ' TeamRight: ' . $game->getTeamRight()->getName()
+            . ' TeamLeft: ' .$game->getTeamLeft()->getName()
+            . ' tournament: ' . $tournament->getName()
+            , Response::HTTP_OK);
     }
 }
