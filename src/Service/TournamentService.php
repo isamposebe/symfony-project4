@@ -68,8 +68,9 @@ class TournamentService
      */
     public function searchTeam(string $nameTeam): Team
     {
-        $trams = $this->entityManager->getRepository(Team::class)->findBy(['name' => $nameTeam]);
-        return $trams[0];
+        return $this->entityManager->getRepository(Team::class)->find($nameTeam);
+        //$trams = $this->entityManager->getRepository(Team::class)->findBy(['name' => $nameTeam]);
+        //return $trams[0];
     }
 
 
