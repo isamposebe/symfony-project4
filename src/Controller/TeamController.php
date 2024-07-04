@@ -67,7 +67,7 @@ class TeamController extends AbstractController
             }
 
             /** Пустая форма для повторного ввода*/
-            $form = $this->createForm(TeamType::class, $team);
+            $form = $this->createForm(TeamType::class);
         }
 
         /** Отправляем данные в шаблон
