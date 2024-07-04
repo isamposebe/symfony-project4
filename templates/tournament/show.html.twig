@@ -85,7 +85,7 @@
             let gemeID = $(this).data('game');
             let tourID = $(this).data('tour')
             $.ajax({
-                url: '/tournament/delete/game/', // не менял
+                url: '/game/delete/', // не менял
                 method: 'POST',
                 dataType: 'html',
                 data: {gemeID: gemeID, tourID: tourID}, // Отправляю через data
