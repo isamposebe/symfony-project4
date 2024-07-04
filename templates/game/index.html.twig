@@ -21,7 +21,6 @@
                 <td>{{ game.goalsScoredRight }}</td>
                 <td>{{ game.goalsScoredLeft }}</td>
                 <td>
-                    <a href="{{ path('app_game_show', {'id': game.id}) }}">show</a>
                     <a href="{{ path('app_game_edit', {'id': game.id}) }}">edit</a>
                 </td>
             </tr>
@@ -33,5 +32,4 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_game_new') }}">Create new</a>
 {% endblock %}
