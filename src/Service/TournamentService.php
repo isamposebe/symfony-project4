@@ -123,8 +123,7 @@ class TournamentService
             }
         }
         $tour->setName($nameTour);
-        $this->entityManager->persist($tour);
-        $this->entityManager->flush();
+        $this->addItem($tour);
         return $tour;
     }
 
