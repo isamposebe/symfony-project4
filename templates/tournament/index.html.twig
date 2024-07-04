@@ -20,5 +20,21 @@
         Создать турнир
     </button>
 
+    {# Отоброжение турниров #}
+    {% if tournamentList is empty %}
+        <p>Турниров пока нет</p>
+    {% else %}
+        <ul>
+            {% for tournament in tournamentList %}
+
+                <li>
+                    <p>{{ tournament.name }}</p>
+                    <a></a>
+                    <a href="{{ path('app_tournament_show', {'id': tournament.id}) }}">Edit</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 </div>
 {% endblock %}
