@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
+use App\Form\TeamType;
 use App\Form\TournamentType;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -103,20 +104,13 @@ class TournamentController extends AbstractController
             }
         }
 
+        /** Список игр в турнире */
         $listGame = $service->listGame($tour);
-        foreach ($listGame as $game) {
-            if ($game->getTeamLeft() != null){
-                $listTeam[] = $game->getTeamLeft()->getName();
-            }
-            if ($game->getTeamRight() != null){
-                $listTeam[] = $game->getTeamRight()->getName();
-            }
-        }
-        /** Список команд в турнире */
-
 
         /** Форма для регистрации команды на турнир */
-        $formTeam = $this->createForm(RecordingCommandType::class);
+        $formRecordingTeam = $this->createForm(RecordingCommandType::class);
+
+        $formTeam = $this->createForm(TeamType::class);
 
         /** Отправляем данные в шаблон
          * @formTeam Форма для добавления команды в турнир
@@ -124,9 +118,10 @@ class TournamentController extends AbstractController
          * @listTeam Список команд в турнире
          */
         return $this->render('tournament/show.html.twig', [
+            'formRecordingTeam' => $formRecordingTeam,
             'formTeam' => $formTeam,
             'tournament' => $tournament,
-            'listTeam' => $listTeam,
+            'listGame' => $listGame,
             'tour' => $tour
         ]);
     }

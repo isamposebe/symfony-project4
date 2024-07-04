@@ -56,14 +56,16 @@
         {# Отправка POST запроса для удалении комментария #}
         $( ".recordingTeam" ).click(function() {
             let nameTeam = $(".nameTeam").val();
-            let tournamentID = $('p').data( "tournament")
-            ;
+            let tournamentID = $('p').data( "tournament");
             $.ajax({
                 url: '/tournament/addTeamTournament/', // не менял
                 method: 'POST',
                 dataType: 'html',
                 data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
                 success: function (data) {
+                    if ($('p:last').html() == 'Нету такой команды'){
+                        $('li:last').remove();
+                    }
                     if ($('p:last').html() !== data){
                         $('p:last').append( "<li><p>" + data + "</p></li>" );
                     }
