@@ -87,6 +87,15 @@ class TournamentService
         );
     }
 
+    /** Выбрать список игр по туру
+     * @param Tour $tour Данные тура
+     * @return array Массив игр по определенному туру
+     */
+    public function listGame(Tour $tour): array
+    {
+        return $this->entityManager->getRepository(Game::class)->findBy(['tour' => $tour]);
+    }
+
     /** Добавление команды в турнир и первый тур
      * @param Team $team Данные команды
      * @param Tournament $tournament Данные турнира
