@@ -9,23 +9,47 @@
     <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
 
     <p>{{ tour.name }}</p>
-
+    <button>Удалить турнир</button>
+    <button>Добавить тур</button>
     {# Отоброжение новостей #}
-    {% if listTeam is empty %}
-        <p>Команд пока нет</p>
+    {% if listGame is empty %}
+        <p>Игр пока нет</p>
     {% else %}
-        <ul>
-            {% for team in listTeam %}
-                <li class="team">
-                    <p>{{ team }}</p>
-                </li>
+        <table>
+            <thead>
+            <tr>
+                <th>Игра № </th>
+                <th>Команды</th>
+                <th>Голы</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for game in listGame %}
+                <tr data-game="{{ game.id }}" >
+                    <th>{{ game.id }}</th>
+                    <td>
+                        {% if game.TeamLeft != null %}
+                                <p>{{ game.TeamLeft.name }}</p>
+                        {% endif %}
+                        {% if game.TeamRight != null %}
+                            <p>{{ game.TeamRight.name }}</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
+                    </td>
+                    <td>
+                        <button class="deleteGame" data-tore="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
+                    </td>
+                </tr>
             {% endfor %}
-        </ul>
+            </tbody>
+        </table>
     {% endif %}
 
-
+    <p>Добавлена команда:</p>
     {# Форма для записи команд #}
-    {{ include('_form.html.twig', {'form': formTeam}) }}
+    {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
 
     <a href="{{ path('app_tournament') }}">back to list</a>
     <script>
@@ -44,6 +68,28 @@
                         $('p:last').append( "<li><p>" + data + "</p></li>" );
                     }
                     console.log($('p:last').html());
+                }
+            });
+        });
+
+        {# Удаление игры #}
+        $( '.deleteGame' ).click(function() {
+            let gemeID = $(this).data('game');
+            let tourID = $(this).data('tour')
+            $.ajax({
+                url: '/tournament/delete/game/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {gemeID: gemeID, tourID: tourID}, // Отправляю через data
+                success: function (data) {
+                    // Стираем из формы
+                    $('tr')
+                        .filter(function (){
+                            return $(this).data('game') == data;
+                        })
+                        .remove()
+                    console.log(data);
+
                 }
             });
         });

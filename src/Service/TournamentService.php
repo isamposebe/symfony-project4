@@ -73,6 +73,11 @@ class TournamentService
         return $trams[0];
     }
 
+    public function searchGameByID(int $idGame): Game
+    {
+        return $this->entityManager->getRepository(Game::class)->find($idGame);
+    }
+
 
     /** Запрос на получение всех Туров по определенному турниру
      * @param Tournament $tournament Данные турнира

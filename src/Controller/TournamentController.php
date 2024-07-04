@@ -161,4 +161,14 @@ class TournamentController extends AbstractController
 
         return new Response( $team->getName(), Response::HTTP_OK);
     }
+
+    #[Route('/delete/game/', name: 'app_Game_delete')]
+    public function deleteGame(Request $request, TournamentService $service): Response
+    {
+        $idGame = $request->request->get('gemeID');
+        $game = $service->searchGameByID($idGame);
+        $service->deleteItem($game);
+        return new Response($idGame, Response::HTTP_OK);
+
+    }
 }
