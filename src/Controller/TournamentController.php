@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Game;
 use App\Entity\Team;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
@@ -22,8 +21,6 @@ class TournamentController extends AbstractController
     #[Route('/', name: 'app_tournament')]
     public function index(): Response
     {
-
-
         return $this->render('tournament/index.html.twig', [
             'controller_name' => 'TournamentController',
         ]);
@@ -71,12 +68,12 @@ class TournamentController extends AbstractController
         ]);
     }
     #[Route('/show/{id}', name: 'app_tournament_show')]
-    public function show(int $id, TournamentService $service,EntityManagerInterface $entityManager): Response
+    public function show(int $id, TournamentService $service): Response
     {
         /** Найдем турнир по id */
         $tournament = $service->searchTournamentID($id);;
 
-        $listTeam = [];
+        $listTeam = $service->listTourNumTournament($tournament);
 
         /** Форма для регистрации команды на турнир */
         $formTeam = $this->createForm(RecordingCommandType::class);
@@ -107,8 +104,7 @@ class TournamentController extends AbstractController
         $tournament = $service->searchTournamentID($tournamentID);
 
         /** Записываем в базу данных добавление команды в турнир */
-        $game = $service->addTeamTournament($team, $tournament);
-
+        $service->addTeamTournament($team, $tournament);
         return new Response('Add Team', Response::HTTP_OK);
     }
 }
