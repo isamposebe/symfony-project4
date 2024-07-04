@@ -61,11 +61,9 @@ class GameController extends AbstractController
     #[Route('/delete/', name: 'app_game_delete', methods: ['POST'])]
     public function delete(Request $request, TournamentService $service): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$game->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($game);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
+        $idGame = $request->request->get('gemeID');
+        $game = $service->searchGameByID($idGame);
+        $service->deleteItem($game);
+        return new Response($idGame, Response::HTTP_OK);
     }
 }
