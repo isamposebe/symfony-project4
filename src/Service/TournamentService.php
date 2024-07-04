@@ -112,7 +112,8 @@ class TournamentService
         $tour->setTournament($tournament);
 
         /** Берем всех туров по tournament */
-        $listTour = $this->entityManager->getRepository(Tour::class)->findBy(['tournament' => $tournament]);
+        //$listTour = $this->entityManager->getRepository(Tour::class)->findBy(['tournament' => $tournament]);
+        $listTour = $this->listTourNumTournament($tournament);
 
         foreach ($listTour as $item) {
             /** Проверяем на существование в базе данных тура */
