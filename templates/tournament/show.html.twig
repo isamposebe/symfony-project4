@@ -102,7 +102,20 @@
                         })
                         .remove()
                     console.log(data);
+                }
+            });
+        });
 
+        {# Переход на следующий тур #}
+        $( ".addTour" ).click(function() {
+            let tourID = $('#tourId').data("tour");
+            $.ajax({
+                url: '/tournament/addTour/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {tourID: tourID}, // Отправляю через data
+                success: function (data) {
+                    console.log(data);
                 }
             });
         });
