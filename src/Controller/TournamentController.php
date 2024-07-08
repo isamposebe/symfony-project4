@@ -96,7 +96,7 @@ class TournamentController extends AbstractController
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
      * @return Response
      */
-    #[Route('/show/{id}', name: 'app_tournament_show')]
+    #[Route('/show/{id}/{nameTour}', name: 'app_tournament_show')]
     public function show(int $id, PostgresqlDBService $serviceDB): Response
     {
         /** Найдем турнир по id */

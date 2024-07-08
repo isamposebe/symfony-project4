@@ -8,11 +8,12 @@
     {# Форма для турнира #}
     <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
 
-    <p>{{ tour.name }}</p>
+    <p>{{ tour.num }}</p>
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
 
-    <button>Добавить тур</button>
+    <button onclick="window.location='{{ path('app_addTour', {'id': tour.id }) }}'">Перейти на следующий тур</button>
+
     {# Отоброжение игр #}
     {% if listGame is empty %}
         <p>Игр пока нет</p>
@@ -56,6 +57,7 @@
     <p>Добавлена команда:</p>
     {# Форма для записи команд #}
     {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
+    <a href="{{ path('app_tournament_show', {'id': tournament.id, 'nameTour': '1'}) }}">Edit</a>
 
     <a href="{{ path('app_tournament') }}">back to list</a>
     <script>

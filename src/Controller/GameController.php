@@ -45,6 +45,7 @@ class GameController extends AbstractController
             $form = $this->createForm(GameType::class);
             return $this->redirectToRoute('app_tournament_show', [
                 'id' => $game->getTour()->getTournament()->getId(),
+                'nameTour' => $game->getTour()->getNum()
             ], Response::HTTP_SEE_OTHER);
         }
 

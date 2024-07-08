@@ -32,12 +32,12 @@ class Tour
         return $this->id;
     }
 
-    public function getNum(): string
+    public function getNum(): int
     {
         return $this->num;
     }
 
-    public function setNum(string $num): static
+    public function setNum(int $num): static
     {
         $this->num = $num;
 

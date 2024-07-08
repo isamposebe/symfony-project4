@@ -26,11 +26,10 @@
     {% else %}
         <ul>
             {% for tournament in tournamentList %}
-
                 <li>
                     <p>{{ tournament.name }}</p>
                     <a></a>
-                    <a href="{{ path('app_tournament_show', {'id': tournament.id}) }}">Edit</a>
+                    <a href="{{ path('app_tournament_show', {'id': tournament.id, 'nameTour': '1'}) }}">Edit</a>
                 </li>
             {% endfor %}
         </ul>

@@ -24,7 +24,7 @@ class TournamentService
     public function addTeamTournament(Team $team, Tournament $tournament): Game
     {
         /** Создаем тур */
-        $nameTour = 'Тур 1';
+        $nameTour = 1;
         $tour = $this->addTour($tournament, $nameTour);
 
         /** Заполняем в игру команду */
@@ -47,11 +47,11 @@ class TournamentService
 
         foreach ($listTour as $item) {
             /** Проверяем на существование в базе данных тура */
-            if ($item->getName() == $nameTour) {
+            if ($item->getNum() == $nameTour) {
                 return $item;
             }
         }
-        $tour->setName($nameTour);
+        $tour->setNum($nameTour);
         $this->postgresqlDBService->addItem($tour);
         return $tour;
     }
