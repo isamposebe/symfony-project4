@@ -98,16 +98,15 @@ class TournamentController extends AbstractController
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
      * @return Response
      */
-    #[Route('/show/{id}/{nameTour}', name: 'app_tournament_show')]
-    public function show(int $id, PostgresqlDBService $serviceDB): Response
+    #[Route('/show/{id}/{numTour}', name: 'app_tournament_show')]
+    public function show(int $id, int $numTour, PostgresqlDBService $serviceDB): Response
     {
         /** Найдем турнир по id */
         $tournament = $serviceDB->searchTournamentID($id);
 
-        $listTour = $serviceDB->listTourNumTournament($tournament);
+        $numTour = 1 + $numTour;
 
-
-        $tour = $serviceDB->searchTourNumOfTournament(1,$tournament);
+        $tour = $serviceDB->searchTourNumOfTournament($numTour, $tournament);
 
         /** Список игр в турнире */
         $listGame = $serviceDB->listGame($tour);
@@ -196,12 +195,19 @@ class TournamentController extends AbstractController
         return new Response( $team->getName(), Response::HTTP_OK);
     }
 
+    /** Удаление Турнира
+     * @param Request $request Данные страницы
+     * @param PostgresqlDBService $serviceDB Работа с базой данных
+     * @param Tournament $tournament Данные турнира
+     * @return Response
+     */
     #[Route('/delete/{id}', name: 'app_tournament_delete')]
     public function delete(Request $request, PostgresqlDBService $serviceDB, Tournament $tournament): Response
     {
         /** Проверяем новость которую надо удалить */
         if ($this->isCsrfTokenValid('delete'.$tournament->getId(), $request->getPayload()->getString('_token')))
         {
+            /** Удаляем турнир */
             $serviceDB->deleteTournament($tournament);
         }
         /** Переходим на страницу добавлении команд */
