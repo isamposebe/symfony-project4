@@ -129,22 +129,20 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    /** Просмотр турнира и добавление в турнир команды
-     * @param int $id ID турнира
+    /** Переход и расчет следующих турниров
+     * @param Request $request Данные страницы
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
      * @return Response
      */
-    #[Route('/addTour/{id}/', name: 'app_addTour')]
-    public function addTour(int $id, PostgresqlDBService $serviceDB): Response
+    #[Route('/addTour/', name: 'app_addTour')]
+    public function addTourAll(Request $request, PostgresqlDBService $serviceDB): Response
     {
-        $oldTour = $serviceDB->searchTourID($id);
-        $tour = new Tour();
-
-        $num = 1 + $oldTour->getNum();
-
-        $tour = $serviceDB->searchTourNumOfTournament($num, $oldTour->getTournament());
-
-
+        $oldTour = $serviceDB->searchTourID($request->get('tourID') - 1);
+        $listGame = $serviceDB->listGame($oldTour);
+        $count = count($listGame);
+        $listTeam = $serviceDB->listTeam($oldTour);
+        dump($listTeam);
+        return new Response('Comment deleted'. $count, Response::HTTP_OK);
     }
 
     /** Добавление команды в турнире
