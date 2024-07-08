@@ -8,7 +8,6 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TeamType;
 use App\Form\TournamentType;
-use App\Form\TourType;
 use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,7 +62,7 @@ class TournamentController extends AbstractController
                 $serviceDB->addItem($tournament);
                 $tour = new Tour();
                 $tour->setTournament($tournament);
-                $tour->setNum(1);
+                $tour->setNum(0);
                 $serviceDB->addItem($tour);
                 /** Выводим сообщение об удачном сохранении */
                 $this->addFlash(
@@ -74,7 +73,7 @@ class TournamentController extends AbstractController
                 /** Переходим на страницу добавлении команд */
                 return $this->redirectToRoute('app_tournament_show',[
                     'id' => $tournament->getId(),
-                    'nameTour' => $tour->getNum()
+                    'numTour' => $tour->getNum()
                 ]);
             }else{
                 /** Выводим сообщение об ошибке */
@@ -95,6 +94,7 @@ class TournamentController extends AbstractController
 
     /** Просмотр турнира и добавление в турнир команды
      * @param int $id ID турнира
+     * @param int $numTour Номер тура
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
      * @return Response
      */
@@ -144,23 +144,7 @@ class TournamentController extends AbstractController
 
         $tour = $serviceDB->searchTourNumOfTournament($num, $oldTour->getTournament());
 
-        $listGame = $serviceDB->listGame($tour);
 
-
-        /** Форма для регистрации команды на турнир */
-        $formRecordingTeam = $this->createForm(RecordingCommandType::class);
-
-        /** Отправляем данные в шаблон
-         * @formTeam Форма для добавления команды в турнир
-         * @tournament Данные турнира
-         * @listTeam Список команд в турнире
-         */
-        return $this->render('tournament/show.html.twig', [
-            'tournament' => $oldTour->getTournament(),
-            'listGame' => $listGame,
-            'formRecordingTeam' => $formRecordingTeam,
-            'tour' => $tour
-        ]);
     }
 
     /** Добавление команды в турнире
