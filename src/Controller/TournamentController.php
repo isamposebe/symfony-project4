@@ -7,6 +7,7 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TeamType;
 use App\Form\TournamentType;
+use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,11 +38,11 @@ class TournamentController extends AbstractController
 
     /**
      * @param Request $request Для проверки формы
-     * @param TournamentService $service
+     * @param PostgresqlDBService $serviceDB
      * @return Response
      */
     #[Route('/new', name: 'app_tournament_new')]
-    public function new(Request $request,TournamentService $service): Response
+    public function new(Request $request, PostgresqlDBService $serviceDB): Response
     {
         /** Создаем турнир */
         $tournament = new Tournament();
@@ -54,10 +55,10 @@ class TournamentController extends AbstractController
         if ($formTournament->isSubmitted() && $formTournament->isValid()) {
 
             /** Проверяем имя на повторы */
-            if ($service->identityVerificationName($tournament)){
+            if ($serviceDB->identityVerificationName($tournament)){
 
                 /** Записываем в базу данных */
-                $service->addItem($tournament);
+                $serviceDB->addItem($tournament);
 
                 /** Выводим сообщение об удачном сохранении */
                 $this->addFlash(
@@ -88,16 +89,16 @@ class TournamentController extends AbstractController
 
     /** Просмотр турнира и добавление в турнир команды
      * @param int $id ID турнира
-     * @param TournamentService $service Сервис по работе с турниром
+     * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
      * @return Response
      */
     #[Route('/show/{id}', name: 'app_tournament_show')]
-    public function show(int $id, TournamentService $service): Response
+    public function show(int $id, PostgresqlDBService $serviceDB): Response
     {
         /** Найдем турнир по id */
-        $tournament = $service->searchTournamentID($id);;
+        $tournament = $serviceDB->searchTournamentID($id);;
 
-        $listTour = $service->listTourNumTournament($tournament);
+        $listTour = $serviceDB->listTourNumTournament($tournament);
         foreach ($listTour as $item) {
             if ($item->getName() == 'Тур 1'){
                 $tour = $item;
@@ -105,7 +106,7 @@ class TournamentController extends AbstractController
         }
 
         /** Список игр в турнире */
-        $listGame = $service->listGame($tour);
+        $listGame = $serviceDB->listGame($tour);
 
         /** Форма для регистрации команды на турнир */
         $formRecordingTeam = $this->createForm(RecordingCommandType::class);
@@ -132,24 +133,24 @@ class TournamentController extends AbstractController
      * @return Response
      */
     #[Route('/addTeamTournament/', name: 'app_add_team_tournament')]
-    public function addTeam(Request $request,TournamentService $service): Response
+    public function addTeam(Request $request,TournamentService $service, PostgresqlDBService $serviceDB): Response
     {
         /** Получаем из request имя команды */
         $team = new Team();
         $nameTeam = $request->request->get('nameTeam');
 
         /** Проверяем что есть такая команда */
-        if ($service->identityVerificationName($team->setName($nameTeam))){
+        if ($serviceDB->identityVerificationName($team->setName($nameTeam))){
             return new Response('Нету такой команды', Response::HTTP_OK);
         }
 
         /** Ищем команду по имени и возвращаем команду из базы данных */
-        $team = $service->searchTeam($nameTeam);
+        $team = $serviceDB->searchTeam($nameTeam);
 
         /** Получаем турнир по ID */
         $tournamentID = $request->request->get('tournamentID');
         /** Берем турнир из базы данных */
-        $tournament = $service->searchTournamentID($tournamentID);
+        $tournament = $serviceDB->searchTournamentID($tournamentID);
 
         /** Записываем в базу данных добавление команды в турнир */
         $service->addTeamTournament($team, $tournament);
@@ -158,15 +159,16 @@ class TournamentController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'app_tournament_delete')]
-    public function delete(Request $request, TournamentService $service, Tournament $tournament): Response
+    public function delete(Request $request, PostgresqlDBService $serviceDB, Tournament $tournament): Response
     {
 
 
         /** Проверяем новость которую надо удалить */
         if ($this->isCsrfTokenValid('delete'.$tournament->getId(), $request->getPayload()->getString('_token')))
         {
-            $service->deleteItem($tournament);
+            $serviceDB->deleteItem($tournament);
         }
         return new Response( Response::HTTP_OK);
     }
+
 }
