@@ -14,10 +14,10 @@ class Tour
     private int $id;
 
     /** Название тура
-     * @var string
+     * @var int
      */
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    private string $name;
+    #[ORM\Column(type: 'integer', length: 255, nullable: false)]
+    private int $num;
 
     /** Данные об турнире
      * @var Tournament
@@ -32,14 +32,14 @@ class Tour
         return $this->id;
     }
 
-    public function getName(): string
+    public function getNum(): string
     {
-        return $this->name;
+        return $this->num;
     }
 
-    public function setName(string $name): static
+    public function setNum(string $num): static
     {
-        $this->name = $name;
+        $this->num = $num;
 
         return $this;
     }
