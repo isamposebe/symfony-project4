@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class TournamentController extends AbstractController
 {
     /** Главная страница турнира
-     * @param $entityManager
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
     #[Route('/', name: 'app_tournament')]
