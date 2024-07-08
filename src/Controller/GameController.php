@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Form\GameType;
 use App\Repository\GameRepository;
+use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,15 +56,15 @@ class GameController extends AbstractController
 
     /** Удаление игры через $request
      * @param Request $request Данные request
-     * @param TournamentService $service Работа с турниром
+     * @param PostgresqlDBService $serviceDB Работа с турниром
      * @return Response
      */
     #[Route('/delete/', name: 'app_game_delete', methods: ['POST'])]
-    public function delete(Request $request, TournamentService $service): Response
+    public function delete(Request $request, PostgresqlDBService $serviceDB): Response
     {
         $idGame = $request->request->get('gemeID');
-        $game = $service->searchGameByID($idGame);
-        $service->deleteItem($game);
+        $game = $serviceDB->searchGameByID($idGame);
+        $serviceDB->deleteItem($game);
         return new Response($idGame, Response::HTTP_OK);
     }
 }
