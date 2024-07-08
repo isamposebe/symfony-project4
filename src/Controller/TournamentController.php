@@ -37,7 +37,7 @@ class TournamentController extends AbstractController
 
     /**
      * @param Request $request Для проверки формы
-     * @param TournamentService $service Сервис по работе с турнирам
+     * @param TournamentService $service
      * @return Response
      */
     #[Route('/new', name: 'app_tournament_new')]
