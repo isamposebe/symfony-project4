@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Team;
+use App\Entity\Tour;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TeamType;
@@ -100,7 +101,7 @@ class TournamentController extends AbstractController
     {
         /** Найдем турнир по id */
         $tournament = $serviceDB->searchTournamentID($id);;
-
+        $tour = new Tour();
         $listTour = $serviceDB->listTourNumTournament($tournament);
         foreach ($listTour as $item) {
             if ($item->getName() == 'Тур 1'){
@@ -133,6 +134,7 @@ class TournamentController extends AbstractController
     /** Добавление команды в турнире
      * @param Request $request Данные request
      * @param TournamentService $service Сервис по работе с турниром
+     * @param PostgresqlDBService $serviceDB
      * @return Response
      */
     #[Route('/addTeamTournament/', name: 'app_add_team_tournament')]
@@ -164,13 +166,13 @@ class TournamentController extends AbstractController
     #[Route('/delete/{id}', name: 'app_tournament_delete')]
     public function delete(Request $request, PostgresqlDBService $serviceDB, Tournament $tournament): Response
     {
-
-
         /** Проверяем новость которую надо удалить */
         if ($this->isCsrfTokenValid('delete'.$tournament->getId(), $request->getPayload()->getString('_token')))
         {
-            $serviceDB->deleteItem($tournament);
+            $serviceDB->deleteTournament($tournament);
         }
+        /** Переходим на страницу добавлении команд */
+        return $this->redirectToRoute('app_tournament',[]);
         return new Response( Response::HTTP_OK);
     }
 
