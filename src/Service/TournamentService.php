@@ -42,7 +42,6 @@ class TournamentService
         $tour->setTournament($tournament);
 
         /** Берем всех туров по tournament */
-        //$listTour = $this->entityManager->getRepository(Tour::class)->findBy(['tournament' => $tournament]);
         $listTour = $this->postgresqlDBService->listTourNumTournament($tournament);
 
         foreach ($listTour as $item) {

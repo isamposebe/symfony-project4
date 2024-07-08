@@ -54,6 +54,10 @@
         </table>
     {% endif %}
 
+    {% if tour.num > 1 %}
+    <button onclick="window.location='{{ path('app_addTour', {'id': tour.id }) }}'">получить данные из прошлого тура</button>
+    {% endif %}
+
     <p>Добавлена команда:</p>
     {# Форма для записи команд #}
     {{ include('_form.html.twig', {'form': formRecordingTeam}) }}

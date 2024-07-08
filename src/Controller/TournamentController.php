@@ -130,6 +130,40 @@ class TournamentController extends AbstractController
         ]);
     }
 
+    /** Просмотр турнира и добавление в турнир команды
+     * @param int $id ID турнира
+     * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
+     * @return Response
+     */
+    #[Route('/addTour/{id}/', name: 'app_addTour')]
+    public function addTour(int $id, PostgresqlDBService $serviceDB): Response
+    {
+        $oldTour = $serviceDB->searchTourID($id);
+        $tour = new Tour();
+
+        $num = 1 + $oldTour->getNum();
+
+        $tour = $serviceDB->searchTourNumOfTournament($num, $oldTour->getTournament());
+
+        $listGame = $serviceDB->listGame($tour);
+
+
+        /** Форма для регистрации команды на турнир */
+        $formRecordingTeam = $this->createForm(RecordingCommandType::class);
+
+        /** Отправляем данные в шаблон
+         * @formTeam Форма для добавления команды в турнир
+         * @tournament Данные турнира
+         * @listTeam Список команд в турнире
+         */
+        return $this->render('tournament/show.html.twig', [
+            'tournament' => $oldTour->getTournament(),
+            'listGame' => $listGame,
+            'formRecordingTeam' => $formRecordingTeam,
+            'tour' => $tour
+        ]);
+    }
+
     /** Добавление команды в турнире
      * @param Request $request Данные request
      * @param TournamentService $service Сервис по работе с турниром
