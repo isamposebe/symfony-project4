@@ -88,6 +88,34 @@ class PostgresqlDBService
     {
         return $this->entityManager->getRepository(Tournament::class)->find($id);
     }
+    /** Поиск тура по ID
+     * @param int $id ID тура
+     * @return Tour Получаем тур
+     */
+    public function searchTourID(int $id): Tour
+    {
+        return $this->entityManager->getRepository(Tour::class)->find($id);
+    }
+
+    /** Поиск тура по имени
+     * @param int $numTour
+     * @param Tournament $tournament
+     * @return Tour Получаем тур
+     */
+    public function searchTourNumOfTournament(int $numTour, Tournament $tournament): Tour
+    {
+        $listTour = $this->listTourNumTournament($tournament);
+        foreach ($listTour as $item) {
+            if ($numTour === $item->getNum()) {
+                return $item;
+            }
+        }
+        $tour = new Tour();
+        $tour->setTournament($tournament);
+        $tour->setNum($numTour);
+        $this->addItem($tour);
+        return $tour;
+    }
 
     /** Поиск команды по имени
      * @param string $nameTeam Название команды

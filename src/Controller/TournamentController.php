@@ -102,14 +102,12 @@ class TournamentController extends AbstractController
     public function show(int $id, PostgresqlDBService $serviceDB): Response
     {
         /** Найдем турнир по id */
-        $tournament = $serviceDB->searchTournamentID($id);;
-        $tour = new Tour();
+        $tournament = $serviceDB->searchTournamentID($id);
+
         $listTour = $serviceDB->listTourNumTournament($tournament);
-        foreach ($listTour as $item) {
-            if ($item->getName() == 'Тур 1'){
-                $tour = $item;
-            }
-        }
+
+
+        $tour = $serviceDB->searchTourNumOfTournament(1,$tournament);
 
         /** Список игр в турнире */
         $listGame = $serviceDB->listGame($tour);
