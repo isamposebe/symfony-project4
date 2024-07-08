@@ -6,9 +6,9 @@
     <h1>Show</h1>
 
     {# Форма для турнира #}
-    <p data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
-
-    <p>{{ tour.num }}</p>
+    <p id="tournamentId" data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
+    <p id="tourId" data-tour="{{ tour.id }}" >{{ tour.id }}</p>
+    <p data-tour="{{ tour.id }}" >{{ tour.num }}</p>
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
 
@@ -55,19 +55,18 @@
     {% endif %}
 
     {% if tour.num > 1 %}
-    <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num}) }}'">получить данные из прошлого тура</button>
+    <button class="addTour">получить данные из прошлого тура</button>
+    {% else %}
+        <p>Добавлена команда:</p>
+        {# Форма для записи команд #}
+        {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
     {% endif %}
-
-    <p>Добавлена команда:</p>
-    {# Форма для записи команд #}
-    {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
-
     <a href="{{ path('app_tournament') }}">back to list</a>
     <script>
-        {# Отправка POST запроса для удалении комментария #}
+        {# Отправка POST запроса для удалении игры #}
         $( ".recordingTeam" ).click(function() {
             let nameTeam = $(".nameTeam").val();
-            let tournamentID = $('p').data( "tournament");
+            let tournamentID = $('#tournamentId').data( "tournament");
             $.ajax({
                 url: '/tournament/addTeamTournament/', // не менял
                 method: 'POST',
