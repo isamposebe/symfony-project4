@@ -7,6 +7,6 @@
 
     {{ include('_form.html.twig') }}
 
-    <a href="{{ path('app_tournament_show', { 'id': game.Tour.Tournament.id }) }}">back to list</a>
+    <a href="{{ path('app_tournament_show', { 'id': game.Tour.Tournament.id, 'nameTour': game.Tour.Num  }) }}">back to list</a>
 
 {% endblock %}
