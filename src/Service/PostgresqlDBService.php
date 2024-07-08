@@ -171,8 +171,20 @@ class PostgresqlDBService
         return true;
     }
 
+    /** Список команд в туре
+     * @param Tour $oldTour Данные тура
+     * @return array Массив данных команд
+     */
     public function listTeam(Tour $oldTour):array
     {
-        return $this->entityManager->getRepository(Team::class)->findBy(['tour' => $oldTour]);
+        $listTeam = [];
+        /**  Получаем список игр по туру */
+        $listGame = $this->listGame($oldTour);
+        /** Перебирая список иг вытаскиваем команды из игр */
+        foreach ($listGame as $game) {
+            $listTeam[] = $game->getTeamRight();
+            $listTeam[] = $game->getTeamLeft();
+        }
+        return $listTeam;
     }
 }
