@@ -59,7 +59,10 @@ class TournamentController extends AbstractController
 
                 /** Записываем в базу данных */
                 $serviceDB->addItem($tournament);
-
+                $tour = new Tour();
+                $tour->setTournament($tournament);
+                $tour->setName("Тур 1");
+                $serviceDB->addItem($tour);
                 /** Выводим сообщение об удачном сохранении */
                 $this->addFlash(
                     'notice',
