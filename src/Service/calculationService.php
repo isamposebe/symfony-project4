@@ -4,7 +4,7 @@ namespace App\Service;
 
 
 
-class TourService
+class calculationService
 {
 
 }
