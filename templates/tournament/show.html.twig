@@ -12,7 +12,7 @@
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
 
-    <button onclick="window.location='{{ path('app_addTour', {'id': tour.id }) }}'">Перейти на следующий тур</button>
+    <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num}) }}'">Перейти на следующий тур</button>
 
     {# Отоброжение игр #}
     {% if listGame is empty %}
@@ -55,13 +55,12 @@
     {% endif %}
 
     {% if tour.num > 1 %}
-    <button onclick="window.location='{{ path('app_addTour', {'id': tour.id }) }}'">получить данные из прошлого тура</button>
+    <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num}) }}'">получить данные из прошлого тура</button>
     {% endif %}
 
     <p>Добавлена команда:</p>
     {# Форма для записи команд #}
     {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
-    <a href="{{ path('app_tournament_show', {'id': tournament.id, 'nameTour': '1'}) }}">Edit</a>
 
     <a href="{{ path('app_tournament') }}">back to list</a>
     <script>

@@ -29,7 +29,8 @@
                 <li>
                     <p>{{ tournament.name }}</p>
                     <a></a>
-                    <a href="{{ path('app_tournament_show', {'id': tournament.id, 'nameTour': '1'}) }}">Edit</a>
+                    {#0 это 1 тур в турнире #}
+                    <a href="{{ path('app_tournament_show', {'id': tournament.id, 'numTour': 0}) }}">Edit</a>
                 </li>
             {% endfor %}
         </ul>
