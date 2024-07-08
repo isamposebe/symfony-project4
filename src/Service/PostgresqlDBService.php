@@ -170,4 +170,9 @@ class PostgresqlDBService
         }
         return true;
     }
+
+    public function listTeam(Tour $oldTour):array
+    {
+        return $this->entityManager->getRepository(Team::class)->findBy(['tour' => $oldTour]);
+    }
 }
