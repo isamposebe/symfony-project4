@@ -7,14 +7,15 @@ use App\Entity\Team;
 use App\Entity\Tour;
 use App\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
-
 class PostgresqlDBService
 {
+
+
     /** Менеджер сущностей
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ){}
     /** Удаление элемента из базы данных
      * @param $item - Данные элемента
@@ -23,6 +24,50 @@ class PostgresqlDBService
     function deleteItem($item):void
     {
         $this->entityManager->remove($item);
+        $this->entityManager->flush();
+    }
+
+    /** Удаление турнира
+     * @param Tournament $tournament Данные турнира
+     * @return void
+     */
+    function deleteTournament(Tournament $tournament):void
+    {
+        /** Берем список всех туров по турниру */
+        $listTour = $this->listTourNumTournament($tournament);
+
+        /** Проходим по списку и удаляем тур */
+        foreach ($listTour as $item) {
+
+            /** Получаем список игр по туру */
+            $listGame = $this->listGame($item);
+
+            /** Проходим по списку и удаляем игры */
+            foreach ($listGame as $game) {
+                /** Удаляем игру */
+                $this->entityManager->remove($game);
+            }
+            /** Удаляем тур */
+            $this->entityManager->remove($item);
+        }
+        /** Удаляем турнир */
+        $this->entityManager->remove($tournament);
+        /** Отправляем в базу данных запрос на удаление */
+        $this->entityManager->flush();
+    }
+
+    /** Удаление тура
+     * @param Tour $tour Данные тура
+     * @return void
+     */
+    function deleteTour(Tour $tour):void
+    {
+
+        $listGame = $this->listGame($tour);
+        foreach ($listGame as $game) {
+            $this->entityManager->remove($game);
+        }
+        $this->entityManager->remove($tour);
         $this->entityManager->flush();
     }
 
