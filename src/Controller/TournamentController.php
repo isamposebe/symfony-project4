@@ -8,6 +8,7 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TeamType;
 use App\Form\TournamentType;
+use App\Form\TourType;
 use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -62,7 +63,7 @@ class TournamentController extends AbstractController
                 $serviceDB->addItem($tournament);
                 $tour = new Tour();
                 $tour->setTournament($tournament);
-                $tour->setName("Тур 1");
+                $tour->setNum(1);
                 $serviceDB->addItem($tour);
                 /** Выводим сообщение об удачном сохранении */
                 $this->addFlash(
@@ -73,6 +74,7 @@ class TournamentController extends AbstractController
                 /** Переходим на страницу добавлении команд */
                 return $this->redirectToRoute('app_tournament_show',[
                     'id' => $tournament->getId(),
+                    'nameTour' => $tour->getNum()
                 ]);
             }else{
                 /** Выводим сообщение об ошибке */
@@ -124,7 +126,6 @@ class TournamentController extends AbstractController
          */
         return $this->render('tournament/show.html.twig', [
             'formRecordingTeam' => $formRecordingTeam,
-            'formTeam' => $formTeam,
             'tournament' => $tournament,
             'listGame' => $listGame,
             'tour' => $tour
@@ -173,7 +174,6 @@ class TournamentController extends AbstractController
         }
         /** Переходим на страницу добавлении команд */
         return $this->redirectToRoute('app_tournament',[]);
-        return new Response( Response::HTTP_OK);
     }
 
 }
