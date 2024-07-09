@@ -6,64 +6,80 @@
     <h1>Show</h1>
 
     {# Форма для турнира #}
-    <p id="tournamentId" data-tournament="{{ tournament.id }}">{{ tournament.name }}</p>
-    <p id="tourId" data-tour="{{ tour.id }}" >{{ tour.id }}</p>
-    <p data-tour="{{ tour.id }}" >{{ tour.num }}</p>
+    <p id="tournamentId" data-tournament="{{ tournament.id }}">Название турнира: {{ tournament.name }}</p>
+    {% if tour.num != 0 %}
+        <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
+    {% endif %}
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
-
-    <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num}) }}'">Перейти на следующий тур</button>
-
-    {# Отоброжение игр #}
-    {% if listGame is empty %}
-        <p>Игр пока нет</p>
-    {% else %}
-        <table>
-            <thead>
-            <tr>
-                <th>Игра № </th>
-                <th>Команда 1</th>
-                <th>Голы Команды 1</th>
-                <th>Команда 2</th>
-                <th>Голы Команды 2</th>
-                <th>Изменить значение голов</th>
-                <th>Удаление игры</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for game in listGame %}
-                <tr data-game="{{ game.id }}" >
-                    <th>{{ game.id }}</th>
-
-                        {% if game.TeamLeft != null %}
-                            <td>{{ game.TeamLeft.name }}</td> <td>{{ game.goalsScoredLeft }}</td>
-                        {% endif %}
-                        {% if game.TeamRight != null %}
-                            <td>{{ game.TeamRight.name }}</td> <td>{{ game.goalsScoredRight }}</td>
-                        {% endif %}
-
-                    <td>
-                        <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
-                    </td>
-                    <td>
-                        <button class="deleteGame" data-tore="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    {% if countListTeam > tour.num + 1 %}
+        <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num + 1}) }}'">Перейти на следующий тур</button>
     {% endif %}
+    {% if tour.num != 0 %}
+        {# Отоброжение игр #}
+        {% if listGame is empty %}
+            <p>Игр пока нет</p>
+        {% else %}
+            <table>
+                <thead>
+                <tr>
+                    <th>Игра № </th>
+                    <th>Команда 1</th>
+                    <th>Голы Команды 1</th>
+                    <th>Команда 2</th>
+                    <th>Голы Команды 2</th>
+                    <th>Изменить значение голов</th>
+                    <th>Удаление игры</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for game in listGame %}
+                    <tr data-game="{{ game.id }}" >
+                        <th>{{ game.id }}</th>
 
-    <button class="addTour">получить данные из прошлого тура</button>
-
-    {% if tour.num > 1 %}
-
+                            {% if game.TeamLeft != null %}
+                                <td>{{ game.TeamLeft.name }}</td> <td>{{ game.goalsScoredLeft }}</td>
+                            {% endif %}
+                            {% if game.TeamRight != null %}
+                                <td>{{ game.TeamRight.name }}</td> <td>{{ game.goalsScoredRight }}</td>
+                            {% endif %}
+                        <td>
+                            <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
+                        </td>
+                        <td>
+                            <button class="deleteGame" data-tore="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <button class="addTour">Генерация туров</button>
+        <a href="{{ path('app_tournament_show',{'id': tournament.id, 'numTour': tour.num - 1}) }}">back to list</a>
     {% else %}
+        {% if listTeam is empty %}
+            <p>Пока нет команд</p>
+        {% else %}
+            {% for team in listTeam %}
+                {% if team != null %}
+                    <div>{{ loop.index }} {{ team.name }}</div>
+                {% else %}
+                    <div>{{ loop.index }}  null</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
         <p>Добавлена команда:</p>
+        <div id="divNewTeam"></div>
+
+
         {# Форма для записи команд #}
         {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
+
     {% endif %}
-    <a href="{{ path('app_tournament') }}">back to list</a>
+
+    <p id="eorrGen"></p>
+
     <script>
         {# Отправка POST запроса для удалении игры #}
         $( ".recordingTeam" ).click(function() {
@@ -75,13 +91,8 @@
                 dataType: 'html',
                 data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
                 success: function (data) {
-                    if ($('p:last').html() == 'Нету такой команды'){
-                        $('li:last').remove();
-                    }
-                    if ($('p:last').html() !== data){
-                        $('p:last').append( "<li><p>" + data + "</p></li>" );
-                    }
-                    console.log($('p:last').html());
+                    $('#divNewTeam').replaceWith("<div>" + data + "</div>");
+                    console.log($('#divNewTeam').html());
                 }
             });
         });
@@ -117,6 +128,7 @@
                 data: {tourID: tourID}, // Отправляю через data
                 success: function (data) {
                     console.log(data);
+                    $('#eorrGen').replaceWith("<p>" + data + "</p>");
                 }
             });
         });

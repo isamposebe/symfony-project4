@@ -105,10 +105,7 @@ class TournamentController extends AbstractController
         /** Найдем турнир по id */
         $tournament = $serviceDB->searchTournamentID($id);
 
-
-        /** (НАдо поменять) */
-        $numTour = 1 + $numTour;
-
+        /** Найти тур по $numTour и турниру */
         $tour = $serviceDB->searchTourNumOfTournament($numTour, $tournament);
 
         /** Список игр в турнире */
@@ -117,9 +114,9 @@ class TournamentController extends AbstractController
         /** Форма для регистрации команды на турнир */
         $formRecordingTeam = $this->createForm(RecordingCommandType::class);
 
-        /** (НАдо добавить поставить вместо $listGame) */
-        $formTeam = $this->createForm(TeamType::class);
-
+        /** Возьмем список команд  */
+        $listTeam = $serviceDB->listTeam($tour);
+        $countListTeam = count($listTeam);
         /** Отправляем данные в шаблон
          * @formTeam Форма для добавления команды в турнир
          * @tournament Данные турнира
@@ -129,7 +126,9 @@ class TournamentController extends AbstractController
             'formRecordingTeam' => $formRecordingTeam,
             'tournament' => $tournament,
             'listGame' => $listGame,
-            'tour' => $tour
+            'tour' => $tour,
+            'listTeam' => $listTeam,
+            'countListTeam' => $countListTeam,
         ]);
     }
 
@@ -151,12 +150,17 @@ class TournamentController extends AbstractController
         $listTeam = $serviceDB->listTeam($oldTour);
         /** Получаем данные турнира из базы данных */
         $tournament = $serviceDB->searchTournamentID($oldTour->getTournament()->getId());
-        try {
-            /** Генерируем тури из списка команд по турниру */
-            $calculationService->generateGamesForTournament($tournament, $listTeam);
-        } catch (\Exception $e) {
+        if ($count % 2 !== 0)
+        {
+            try {
+                /** Генерируем тури из списка команд по турниру */
+                $calculationService->generateGamesForTournament($tournament, $listTeam);
+            } catch (\Exception $e) {
+            }
+        }else{
+            return new Response('команд нечетное количество', Response::HTTP_OK);
         }
-        dump($listTeam);
+
         return new Response('Генерация прошла успешна', Response::HTTP_OK);
     }
 
@@ -186,6 +190,8 @@ class TournamentController extends AbstractController
         $tournament = $serviceDB->searchTournamentID($tournamentID);
         /** Записываем в базу данных добавление команды в турнир */
         $service->addTeamTournament($team, $tournament);
+
+
         /** Выводим имя команды при успешном добавлении */
         return new Response( $team->getName(), Response::HTTP_OK);
     }

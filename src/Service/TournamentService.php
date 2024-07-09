@@ -24,7 +24,7 @@ class TournamentService
     public function addTeamTournament(Team $team, Tournament $tournament): Game
     {
         /** Создаем тур */
-        $numTour = 1;
+        $numTour = 0;
         $tour = $this->addTour($tournament, $numTour);
 
         /** Заполняем в игру команду */
