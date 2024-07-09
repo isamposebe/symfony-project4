@@ -8,9 +8,7 @@
 
     {# Форма для турнира #}
     <p id="tournamentId" data-tournament="{{ tournament.id }}">Название турнира: {{ tournament.name }}</p>
-    {% if tour.num != 0 %}
-        <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
-    {% endif %}
+    <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
     {% if countListTeam > tour.num + 1 %}
@@ -55,7 +53,6 @@
                 </tbody>
             </table>
         {% endif %}
-        <button class="addTour">Генерация туров</button>
         <a href="{{ path('app_tournament_show',{'id': tournament.id, 'numTour': tour.num - 1}) }}">back to list</a>
     {% else %}
         {% if listTeam is empty %}
@@ -72,11 +69,9 @@
 
         <p>Добавлена команда:</p>
         <div id="divNewTeam"></div>
-
-
         {# Форма для записи команд #}
         {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
-
+        <button class="addTour">Генерация туров</button>
     {% endif %}
 
     <p id="eorrGen"></p>

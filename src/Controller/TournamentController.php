@@ -141,7 +141,7 @@ class TournamentController extends AbstractController
     public function addTourAll(Request $request, PostgresqlDBService $serviceDB, CalculationService $calculationService): Response
     {
         /** Берем старый тур (Надо исправить и брать сразу ListTeam, но и так работает) */
-        $oldTour = $serviceDB->searchTourID($request->get('tourID') - 1);
+        $oldTour = $serviceDB->searchTourID($request->get('tourID'));
 
         /** Достаем список команд из игр прошлого тура */
         $listTeam = $serviceDB->listTeam($oldTour);
