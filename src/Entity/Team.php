@@ -21,6 +21,12 @@ class Team
     private string $name;
 
 
+    /**
+     * @var Collection<int, Game>
+     */
+    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'teamRight')]
+    private Collection $games;
+
     public function getId(): int
     {
         return $this->id;
@@ -65,6 +71,12 @@ class Team
             }
         }
 
+        return $this;
+    }
+
+    public function setGames(Collection $games): Team
+    {
+        $this->games = $games;
         return $this;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -14,8 +15,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
+    /** Страница регистрация нового пользователя
+     * @param Request $request Тело страницы
+     * @param UserPasswordHasherInterface $userPasswordHasher Хеширование пароля
+     * @param Security $security Проверка пароля
+     * @param PostgresqlDBService $service Сервис по работе базой данных
+     * @return Response
+     */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, TournamentService $service): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, PostgresqlDBService $service): Response
     {
         /** Создаем пользователя */
         $user = new User();

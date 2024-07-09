@@ -25,8 +25,6 @@ class Tour
     #[ORM\ManyToOne(targetEntity: Tournament::class, inversedBy: 'tours')]
     private Tournament $tournament;
 
-
-
     public function getId(): int
     {
         return $this->id;
@@ -55,6 +53,7 @@ class Tour
 
         return $this;
     }
+
 
 
 }

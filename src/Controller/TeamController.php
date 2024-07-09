@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Form\TeamType;
 use App\Repository\TeamRepository;
+use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,24 +19,27 @@ class TeamController extends AbstractController
 {
 
     /** Главная станица администратора
-     * @param TeamRepository $teamRepository
+     * @param TeamRepository $teamRepository Данные по работе с командами
      * @return Response
      */
     #[Route('/', name: 'app_team_index', methods: ['GET'])]
     public function index(TeamRepository $teamRepository): Response
     {
+        /** Отправляем данные в шаблон
+         * @teams Список всех команд
+         */
         return $this->render('team/index.html.twig', [
             'teams' => $teamRepository->findAll(),
         ]);
     }
 
     /** Создание новой команды
-     * @param Request $request Для работы с формой
-     * @param TournamentService $service Сервис работы с командой
+     * @param Request $request Тело страницы
+     * @param PostgresqlDBService $service Сервис работы с базой данных
      * @return Response
      */
     #[Route('/new', name: 'app_team_new', methods: ['GET', 'POST'])]
-    public function new(Request $request,TournamentService $service): Response
+    public function new(Request $request, PostgresqlDBService $service): Response
     {
         /** Создаем новую команду */
         $team = new Team();
@@ -79,13 +83,13 @@ class TeamController extends AbstractController
     }
 
     /** Удаление команды
-     * @param TournamentService $service Сервис по работе с турнирами
+     * @param PostgresqlDBService $service Сервис по работе с базой данных
      * @param Request $request Для проверки токена
      * @param Team $team Данные команды
      * @return Response
      */
     #[Route('/{id}', name: 'app_team_delete', methods: ['POST'])]
-    public function delete(TournamentService $service, Request $request, Team $team): Response
+    public function delete(PostgresqlDBService $service, Request $request, Team $team): Response
     {
         if ($this->isCsrfTokenValid('delete'.$team->getId(), $request->getPayload()->getString('_token'))) {
              $service->deleteItem($team);

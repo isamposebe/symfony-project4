@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\TournamentRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
@@ -38,9 +37,9 @@ class Tournament
     }
 
     /**
-     * @return Collection<int, Tour>
+     * @return Tour
      */
-    public function getTours(): Collection
+    public function getTours(): Tour
     {
         return $this->tours;
     }

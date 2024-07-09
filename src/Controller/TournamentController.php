@@ -33,14 +33,13 @@ class TournamentController extends AbstractController
         $tournamentList = $entityManager->getRepository(Tournament::class);
         $tournamentList = $tournamentList->findAll();
         return $this->render('tournament/index.html.twig', [
-            'controller_name' => 'TournamentController',
             'tournamentList' => $tournamentList,
             ]);
     }
 
-    /**
+    /** Страница создание турнира
      * @param Request $request Для проверки формы
-     * @param PostgresqlDBService $serviceDB
+     * @param PostgresqlDBService $serviceDB Работа с базой данных
      * @return Response
      */
     #[Route('/new', name: 'app_tournament_new')]
@@ -49,21 +48,22 @@ class TournamentController extends AbstractController
         /** Создаем турнир */
         $tournament = new Tournament();
 
-        /** Создание формы турнира */
+        /** Создание формы нового турнира */
         $formTournament = $this->createForm(TournamentType::class, $tournament);
         $formTournament->handleRequest($request);
 
         /** Обработка нажатие кнопки из формы */
         if ($formTournament->isSubmitted() && $formTournament->isValid()) {
-
             /** Проверяем имя на повторы */
             if ($serviceDB->identityVerificationName($tournament)){
-
                 /** Записываем в базу данных */
                 $serviceDB->addItem($tournament);
                 $tour = new Tour();
                 $tour->setTournament($tournament);
+
+                /** (Надо исправить на 1) */
                 $tour->setNum(0);
+
                 $serviceDB->addItem($tour);
                 /** Выводим сообщение об удачном сохранении */
                 $this->addFlash(
@@ -93,10 +93,10 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    /** Просмотр турнира и добавление в турнир команды
+    /** Страница просмотра турнира и добавление в турнир команды
      * @param int $id ID турнира
      * @param int $numTour Номер тура
-     * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
+     * @param PostgresqlDBService $serviceDB Сервис по работе с базой данных
      * @return Response
      */
     #[Route('/show/{id}/{numTour}', name: 'app_tournament_show')]
@@ -105,6 +105,8 @@ class TournamentController extends AbstractController
         /** Найдем турнир по id */
         $tournament = $serviceDB->searchTournamentID($id);
 
+
+        /** (НАдо поменять) */
         $numTour = 1 + $numTour;
 
         $tour = $serviceDB->searchTourNumOfTournament($numTour, $tournament);
@@ -115,6 +117,7 @@ class TournamentController extends AbstractController
         /** Форма для регистрации команды на турнир */
         $formRecordingTeam = $this->createForm(RecordingCommandType::class);
 
+        /** (НАдо добавить поставить вместо $listGame) */
         $formTeam = $this->createForm(TeamType::class);
 
         /** Отправляем данные в шаблон
@@ -133,33 +136,38 @@ class TournamentController extends AbstractController
     /** Переход и расчет следующих турниров
      * @param Request $request Данные страницы
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром
+     * @param CalculationService $calculationService Сервис по работе с расчетами
      * @return Response
      */
     #[Route('/addTour/', name: 'app_addTour')]
     public function addTourAll(Request $request, PostgresqlDBService $serviceDB, CalculationService $calculationService): Response
     {
+        /** Берем старый тур (Надо исправить и брать сразу ListTeam, но и так работает) */
         $oldTour = $serviceDB->searchTourID($request->get('tourID') - 1);
         $listGame = $serviceDB->listGame($oldTour);
         $count = count($listGame);
+
+        /** Достаем список команд из игр прошлого тура */
         $listTeam = $serviceDB->listTeam($oldTour);
+        /** Получаем данные турнира из базы данных */
         $tournament = $serviceDB->searchTournamentID($oldTour->getTournament()->getId());
         try {
+            /** Генерируем тури из списка команд по турниру */
             $calculationService->generateGamesForTournament($tournament, $listTeam);
         } catch (\Exception $e) {
         }
-
         dump($listTeam);
-        return new Response('Comment deleted'. $count, Response::HTTP_OK);
+        return new Response('Генерация прошла успешна', Response::HTTP_OK);
     }
 
-    /** Добавление команды в турнире
-     * @param Request $request Данные request
+    /** Добавление команды в турнир
+     * @param Request $request Тело страницы
      * @param TournamentService $service Сервис по работе с турниром
-     * @param PostgresqlDBService $serviceDB
+     * @param PostgresqlDBService $serviceDB Сервис по рапоте с базой данных
      * @return Response
      */
     #[Route('/addTeamTournament/', name: 'app_add_team_tournament')]
-    public function addTeam(Request $request,TournamentService $service, PostgresqlDBService $serviceDB): Response
+    public function addTeam(Request $request, TournamentService $service, PostgresqlDBService $serviceDB): Response
     {
         /** Получаем из request имя команды */
         $team = new Team();
@@ -172,14 +180,13 @@ class TournamentController extends AbstractController
 
         /** Ищем команду по имени и возвращаем команду из базы данных */
         $team = $serviceDB->searchTeam($nameTeam);
-
         /** Получаем турнир по ID */
         $tournamentID = $request->request->get('tournamentID');
         /** Берем турнир из базы данных */
         $tournament = $serviceDB->searchTournamentID($tournamentID);
-
         /** Записываем в базу данных добавление команды в турнир */
         $service->addTeamTournament($team, $tournament);
+        /** Выводим имя команды при успешном добавлении */
         return new Response( $team->getName(), Response::HTTP_OK);
     }
 

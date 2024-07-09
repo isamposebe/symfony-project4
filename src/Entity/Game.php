@@ -45,7 +45,7 @@ class Game
     #[ORM\JoinColumn(nullable: false)]
     private Tour $tour;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
