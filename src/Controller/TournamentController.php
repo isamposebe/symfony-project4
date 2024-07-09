@@ -143,14 +143,15 @@ class TournamentController extends AbstractController
     {
         /** Берем старый тур (Надо исправить и брать сразу ListTeam, но и так работает) */
         $oldTour = $serviceDB->searchTourID($request->get('tourID') - 1);
-        $listGame = $serviceDB->listGame($oldTour);
-        $count = count($listGame);
 
         /** Достаем список команд из игр прошлого тура */
         $listTeam = $serviceDB->listTeam($oldTour);
+
+        $count = count($listTeam);
         /** Получаем данные турнира из базы данных */
         $tournament = $serviceDB->searchTournamentID($oldTour->getTournament()->getId());
-        if ($count % 2 !== 0)
+        dump($listTeam);
+        if ($count % 2 == 0)
         {
             try {
                 /** Генерируем тури из списка команд по турниру */

@@ -81,7 +81,7 @@
     <p id="eorrGen"></p>
 
     <script>
-        {# Отправка POST запроса для удалении игры #}
+        {# Отправка POST запроса записи команды #}
         $( ".recordingTeam" ).click(function() {
             let nameTeam = $(".nameTeam").val();
             let tournamentID = $('#tournamentId').data( "tournament");
@@ -91,7 +91,7 @@
                 dataType: 'html',
                 data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
                 success: function (data) {
-                    $('#divNewTeam').replaceWith("<div>" + data + "</div>");
+                    $('#divNewTeam').replaceWith(data);
                     console.log($('#divNewTeam').html());
                 }
             });
