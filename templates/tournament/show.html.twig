@@ -100,13 +100,12 @@
 
         {# Удаление игры #}
         $( '.deleteGame' ).click(function() {
-            let gemeID = $(this).data('game');
             let tourID = $(this).data('tour')
             $.ajax({
                 url: '/game/delete/', // не менял
                 method: 'POST',
                 dataType: 'html',
-                data: {gemeID: gemeID, tourID: tourID}, // Отправляю через data
+                data: { tourID: tourID}, // Отправляю через data
                 success: function (data) {
                     // Стираем из формы
                     $('tr')

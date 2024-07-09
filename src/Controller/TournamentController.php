@@ -150,17 +150,18 @@ class TournamentController extends AbstractController
         /** Получаем данные турнира из базы данных */
         $tournament = $serviceDB->searchTournamentID($oldTour->getTournament()->getId());
         dump($listTeam);
-        if ($count % 2 == 0)
-        {
-            try {
-                /** Генерируем тури из списка команд по турниру */
-                $calculationService->generateGamesForTournament($tournament, $listTeam);
-            } catch (\Exception $e) {
+        foreach ($listTeam as $team) {
+            if ($team == null){
+                dump($team);
+                return new Response('команд нечетное количество', Response::HTTP_OK);
             }
-        }else{
-            return new Response('команд нечетное количество', Response::HTTP_OK);
         }
-
+        try {
+            /** Генерируем тури из списка команд по турниру */
+            $calculationService->generateGamesForTournament($tournament, $listTeam);
+        } catch (\Exception $e) {
+            return new Response($e, Response::HTTP_OK);
+        }
         return new Response('Генерация прошла успешна', Response::HTTP_OK);
     }
 
