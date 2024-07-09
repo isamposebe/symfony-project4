@@ -54,8 +54,10 @@
         </table>
     {% endif %}
 
-    {% if tour.num > 1 %}
     <button class="addTour">получить данные из прошлого тура</button>
+
+    {% if tour.num > 1 %}
+
     {% else %}
         <p>Добавлена команда:</p>
         {# Форма для записи команд #}
