@@ -8,6 +8,7 @@ use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
 use App\Form\TeamType;
 use App\Form\TournamentType;
+use App\Service\CalculationService;
 use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -135,12 +136,18 @@ class TournamentController extends AbstractController
      * @return Response
      */
     #[Route('/addTour/', name: 'app_addTour')]
-    public function addTourAll(Request $request, PostgresqlDBService $serviceDB): Response
+    public function addTourAll(Request $request, PostgresqlDBService $serviceDB, CalculationService $calculationService): Response
     {
         $oldTour = $serviceDB->searchTourID($request->get('tourID') - 1);
         $listGame = $serviceDB->listGame($oldTour);
         $count = count($listGame);
         $listTeam = $serviceDB->listTeam($oldTour);
+        $tournament = $serviceDB->searchTournamentID($oldTour->getTournament()->getId());
+        try {
+            $calculationService->generateGamesForTournament($tournament, $listTeam);
+        } catch (\Exception $e) {
+        }
+
         dump($listTeam);
         return new Response('Comment deleted'. $count, Response::HTTP_OK);
     }
