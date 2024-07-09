@@ -4,6 +4,7 @@
 
 {% block body %}
     <h1>Show</h1>
+    <button onclick="window.location='{{ path('app_tournament') }}'">Главная</button>
 
     {# Форма для турнира #}
     <p id="tournamentId" data-tournament="{{ tournament.id }}">Название турнира: {{ tournament.name }}</p>

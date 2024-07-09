@@ -6,7 +6,6 @@ use App\Entity\Team;
 use App\Entity\Tour;
 use App\Entity\Tournament;
 use App\Form\RecordingCommandType;
-use App\Form\TeamType;
 use App\Form\TournamentType;
 use App\Service\CalculationService;
 use App\Service\PostgresqlDBService;
