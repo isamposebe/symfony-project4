@@ -180,7 +180,6 @@ class TournamentController extends AbstractController
 
         /** Записываем в базу данных добавление команды в турнир */
         $service->addTeamTournament($team, $tournament);
-
         return new Response( $team->getName(), Response::HTTP_OK);
     }
 
