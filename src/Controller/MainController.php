@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\CalculationService;
 use App\Service\PostgresqlDBService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,20 @@ class MainController extends AbstractController
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
             'listTournaments' => $listTournaments
+        ]);
+    }
+
+    #[Route('/show/{id}', name: 'app_show')]
+    public function show(int $id, PostgresqlDBService $DBService): Response
+    {
+        /** Берем из базы данных турнир по ID */
+        $tournament = $DBService->searchTournamentID($id);
+        /** Список данных по команде с расчетами */
+        $listTeamCalculation = $DBService->listTeamCalculation($tournament);
+        dump($listTeamCalculation);
+        return $this->render('main/show.html.twig', [
+            'tournament' => $tournament,
+            'listTeamCalculation' => $listTeamCalculation
         ]);
     }
 }
