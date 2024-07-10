@@ -16,7 +16,7 @@
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
     {% if countListTeam > tour.num + 1 %}
-        <button onclick="window.location='{{ path('app_tournament_show', {'id': tournament.id, 'numTour': tour.num + 1}) }}'">Перейти на следующий тур</button>
+        <button onclick="window.location='{{ path('app_tournament_edit', {'id': tournament.id, 'numTour': tour.num + 1}) }}'">Перейти на следующий тур</button>
     {% endif %}
     {% if tour.num != 0 %}
         {# Отоброжение игр #}
@@ -57,7 +57,7 @@
                 </tbody>
             </table>
         {% endif %}
-        <a href="{{ path('app_tournament_show',{'id': tournament.id, 'numTour': tour.num - 1}) }}">back to list</a>
+        <a href="{{ path('app_tournament_edit',{'id': tournament.id, 'numTour': tour.num - 1}) }}">back to list</a>
     {% else %}
         {% if listTeam is empty %}
             <p>Пока нет команд</p>

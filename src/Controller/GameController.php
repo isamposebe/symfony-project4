@@ -54,7 +54,7 @@ class GameController extends AbstractController
              * @id ID турнира
              * @numTour Номер тура
              */
-            return $this->redirectToRoute('app_tournament_show', [
+            return $this->redirectToRoute('app_tournament_edit', [
                 'id' => $game->getTour()->getTournament()->getId(),
                 'numTour' => $game->getTour()->getNum()
             ], Response::HTTP_SEE_OTHER);

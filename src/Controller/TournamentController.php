@@ -10,7 +10,6 @@ use App\Form\TournamentType;
 use App\Service\CalculationService;
 use App\Service\PostgresqlDBService;
 use App\Service\TournamentService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,15 +21,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class TournamentController extends AbstractController
 {
     /** Главная страница турнира
-     * @param EntityManagerInterface $entityManager
+     * @param PostgresqlDBService $DBService Сервис по работе с базой данных
      * @return Response
      */
-    #[Route('/', name: 'app_tournament')]
-    public function index(EntityManagerInterface $entityManager): Response
+    #[Route('/', name: 'app_tournament', methods: ['GET'])]
+    public function index(PostgresqlDBService $DBService): Response
     {
-        /** Сортируем по дате (Возможно выкинуть в сервис)*/
-        $tournamentList = $entityManager->getRepository(Tournament::class);
-        $tournamentList = $tournamentList->findAll();
+        /** Получаем список турниров */
+        $tournamentList = $DBService->listTournaments();
         return $this->render('tournament/index.html.twig', [
             'tournamentList' => $tournamentList,
             ]);
@@ -71,7 +69,7 @@ class TournamentController extends AbstractController
                 );
 
                 /** Переходим на страницу добавлении команд */
-                return $this->redirectToRoute('app_tournament_show',[
+                return $this->redirectToRoute('app_tournament_edit',[
                     'id' => $tournament->getId(),
                     'numTour' => $tour->getNum()
                 ]);
@@ -98,6 +96,40 @@ class TournamentController extends AbstractController
      * @param PostgresqlDBService $serviceDB Сервис по работе с базой данных
      * @return Response
      */
+    #[Route('/edit/{id}/{numTour}', name: 'app_tournament_edit')]
+    public function edit(int $id, int $numTour, PostgresqlDBService $serviceDB): Response
+    {
+        /** Найдем турнир по id */
+        $tournament = $serviceDB->searchTournamentID($id);
+
+        /** Найти тур по $numTour и турниру */
+        $tour = $serviceDB->searchTourNumOfTournament($numTour, $tournament);
+
+        /** Список игр в турнире */
+        $listGame = $serviceDB->listGame($tour);
+
+        /** Форма для регистрации команды на турнир */
+        $formRecordingTeam = $this->createForm(RecordingCommandType::class);
+
+        /** Возьмем список команд  */
+        $listTeam = $serviceDB->listTeam($tour);
+        $countListTeam = count($listTeam);
+        /** Отправляем данные в шаблон
+         * @formTeam Форма для добавления команды в турнир
+         * @tournament Данные турнира
+         * @listTeam Список команд в турнире
+         */
+        return $this->render('tournament/edit.html.twig', [
+            'formRecordingTeam' => $formRecordingTeam,
+            'tournament' => $tournament,
+            'listGame' => $listGame,
+            'tour' => $tour,
+            'listTeam' => $listTeam,
+            'countListTeam' => $countListTeam,
+        ]);
+    }
+
+
     #[Route('/show/{id}/{numTour}', name: 'app_tournament_show')]
     public function show(int $id, int $numTour, PostgresqlDBService $serviceDB): Response
     {
@@ -121,7 +153,7 @@ class TournamentController extends AbstractController
          * @tournament Данные турнира
          * @listTeam Список команд в турнире
          */
-        return $this->render('tournament/show.html.twig', [
+        return $this->render('tournament/edit.html.twig', [
             'formRecordingTeam' => $formRecordingTeam,
             'tournament' => $tournament,
             'listGame' => $listGame,
