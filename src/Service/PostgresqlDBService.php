@@ -32,7 +32,7 @@ class PostgresqlDBService
      * @param $item - Данные элемента
      * @return void
      */
-    function deleteItem($item):void
+    public function deleteItem($item):void
     {
         $this->entityManager->remove($item);
         $this->entityManager->flush();
@@ -42,7 +42,7 @@ class PostgresqlDBService
      * @param Tournament $tournament Данные турнира
      * @return void
      */
-    function deleteTournament(Tournament $tournament):void
+    public function deleteTournament(Tournament $tournament):void
     {
         /** Берем список всех туров по турниру */
         $listTour = $this->listTourNumTournament($tournament);
@@ -71,7 +71,7 @@ class PostgresqlDBService
      * @param Tour $tour Данные тура
      * @return void
      */
-    function deleteTour(Tour $tour):void
+    private function deleteTour(Tour $tour):void
     {
 
         $listGame = $this->listGame($tour);
@@ -87,7 +87,7 @@ class PostgresqlDBService
      * @param $item - Данные элемента
      * @return bool Если есть совпадения, то false, иначе true
      */
-    function addItem($item):void
+    public function identityVerificationName($item):bool
     {
         $list = $this->entityManager->getRepository($item::class)->findAll();
         foreach ($list as $t) {
