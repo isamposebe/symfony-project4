@@ -202,4 +202,10 @@ class CalculationService
         return $sum;
     }
 
+    public function points(mixed $team, Tournament $tournament):int
+    {
+        $point = 0;
+        return $point;
+    }
+
 }
