@@ -218,4 +218,39 @@ class PostgresqlDBService
         }
         return $listTeam;
     }
+
+    /** Список команд с расчетами
+     * @param Tournament $tournament Данные турнира
+     * @return array|string[]
+     */
+    public function listTeamCalculation(Tournament $tournament):array
+    {
+        $listTeamCalculation = [
+            'location',
+            'name',
+            'numberMatches',
+            'points',
+            'goalsScored',
+            'goalsConced',
+            'wins',
+            'draws',
+            'defeats',
+        ];
+        $tour = $this->searchTourNumOfTournament(0, $tournament);
+        $listTeam = $this->listTeam($tour);
+        foreach ($listTeam as $team) {
+            $listTeamCalculation = [
+                'location' => $this->calculationService->location($team, $tournament),
+                'name' => $team->getName(),
+                'numberMatches' => $this->calculationService->numberMatches($team, $tournament),
+                'points' => $this->calculationService->points($team, $tournament),
+                'goalsScored' => $this->calculationService->goalsScored($team, $tournament),
+                'goalsConced' => $this->calculationService->goalsConced($team, $tournament),
+                'wins' => $this->calculationService->wins($team, $tournament),
+                'draws' => $this->calculationService->draws($team, $tournament),
+                'defeats' => $this->calculationService->defeats($team, $tournament),
+            ];
+        }
+        return $listTeamCalculation;
+    }
 }
