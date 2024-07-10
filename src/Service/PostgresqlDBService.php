@@ -16,6 +16,7 @@ class PostgresqlDBService
      */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly CalculationService $calculationService,
     ){}
 
     /** Добавляет элемент в базу данных
@@ -178,6 +179,27 @@ class PostgresqlDBService
     public function listGame(Tour $tour): array
     {
         return $this->entityManager->getRepository(Game::class)->findBy(['tour' => $tour]);
+    }
+
+    /** Список всех игр в турнире
+     * @param Tournament $tournament Данные турнира
+     * @return array Список игр
+     */
+    public function listGameTournament(Tournament $tournament): array
+    {
+        $listGame = [];
+        //$listGame = $this->entityManager->getRepository(Game::class)->findBy(['team' => $team]);
+        $listTour = $this->listTourNumTournament($tournament);
+        foreach ($listTour as $tour) {
+            if ($tour->getNum() !== 0) {
+                $listGame = $this->listGame($tour);
+                foreach ($listGame as $game) {
+                    $listGame[] = $game;
+                }
+            }
+
+        }
+        return $listGame;
     }
 
     /** Список команд в туре
