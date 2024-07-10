@@ -8,7 +8,11 @@
 
     {# Форма для турнира #}
     <p id="tournamentId" data-tournament="{{ tournament.id }}">Название турнира: {{ tournament.name }}</p>
-    <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
+    {% if tour.num != 0 %}
+        <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
+    {% else %}
+        <p id="tourId" data-tour="{{ tour.id }}" >Перейдите в тур</p>
+    {% endif %}
     {# Кнопка удалить форму #}
     {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
     {% if countListTeam > tour.num + 1 %}
