@@ -143,4 +143,40 @@ class CalculationService
         }
         return $status;
     }
+
+    /** Кол-во ничей у команды в турнире
+     * @param Team $team Данные команды
+     * @param Tournament $tournament Данные турнира
+     * @return int Кол-во ничей
+     */
+    public function draws(Team $team, Tournament $tournament):int
+    {
+        $draws = 0;
+        $listGame = $this->DBService->listGameTournament($tournament);
+        foreach ($listGame as $game) {
+            $statusGame = $this->statusGame($game, $team);
+            if ($statusGame === 1) {
+                $draws++;
+            }
+        }
+        return $draws;
+    }
+
+    /** Кол-во проигрышей команды в турнире
+     * @param Team $team Данные команды
+     * @param Tournament $tournament Данные турнира
+     * @return int Кол-во проигрышей
+     */
+    public function defeats(Team $team, Tournament $tournament): int
+    {
+        $defeats = 0;
+        $listGame = $this->DBService->listGameTournament($tournament);
+        foreach ($listGame as $game) {
+            $statusGame = $this->statusGame($game, $team);
+            if ($statusGame === 0) {
+                $defeats++;
+            }
+        }
+        return $defeats;
+    }
 }
