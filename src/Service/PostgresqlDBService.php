@@ -17,6 +17,17 @@ class PostgresqlDBService
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ){}
+
+    /** Добавляет элемент в базу данных
+     * @param $item - Данные элемента
+     * @return void
+     */
+    public function addItem($item):void
+    {
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+    }
+
     /** Удаление элемента из базы данных
      * @param $item - Данные элемента
      * @return void
@@ -71,14 +82,20 @@ class PostgresqlDBService
         $this->entityManager->flush();
     }
 
-    /** Добавляет элемент в базу данных
+    /** Проверка на идентичность (Проверяется Name)
+     * - Поиск элемента по его классу (Team, Tournament, Tour, User)
      * @param $item - Данные элемента
-     * @return void
+     * @return bool Если есть совпадения, то false, иначе true
      */
     function addItem($item):void
     {
-        $this->entityManager->persist($item);
-        $this->entityManager->flush();
+        $list = $this->entityManager->getRepository($item::class)->findAll();
+        foreach ($list as $t) {
+            if ($t->getName() == $item->getName()){
+                return false;
+            }
+        }
+        return true;
     }
     /** Поиск турнира по ID
      * @param int $id ID турнира
@@ -132,6 +149,14 @@ class PostgresqlDBService
         return $this->entityManager->getRepository(Game::class)->find($idGame);
     }
 
+    /** Запрос на получение всех турниров
+     * @return array Массив из сущностей Tournament
+     */
+    public function listTournaments(): array
+    {
+        $tournamentList = $this->entityManager->getRepository(Tournament::class);
+        return $tournamentList->findAll();
+    }
 
     /** Запрос на получение всех Туров по определенному турниру
      * @param Tournament $tournament Данные турнира
@@ -153,21 +178,6 @@ class PostgresqlDBService
     public function listGame(Tour $tour): array
     {
         return $this->entityManager->getRepository(Game::class)->findBy(['tour' => $tour]);
-    }
-    /** Проверка на идентичность (Проверяется Name)
-     * - Поиск элемента по его классу (Team, Tournament, Tour, User)
-     * @param $item - Данные элемента
-     * @return bool Если есть совпадения, то false, иначе true
-     */
-    public function identityVerificationName($item):bool
-    {
-        $list = $this->entityManager->getRepository($item::class)->findAll();
-        foreach ($list as $t) {
-            if ($t->getName() == $item->getName()){
-                return false;
-            }
-        }
-        return true;
     }
 
     /** Список команд в туре
