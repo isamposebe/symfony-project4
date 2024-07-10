@@ -239,13 +239,17 @@ class PostgresqlDBService
         $tour = $this->searchTourNumOfTournament(0, $tournament);
         $listTeam = $this->listTeam($tour);
         foreach ($listTeam as $team) {
+            $goals = $this->calculationService->goals($team, $tournament);
+            $goalsScored = $goals['Scored'];
+            $goalsConcede = $goals['Concede'];
             $listTeamCalculation = [
                 'location' => $this->calculationService->location($team, $tournament),
                 'name' => $team->getName(),
                 'numberMatches' => $this->calculationService->numberMatches($team, $tournament),
                 'points' => $this->calculationService->points($team, $tournament),
-                'goalsScored' => $this->calculationService->goalsScored($team, $tournament),
-                'goalsConced' => $this->calculationService->goalsConced($team, $tournament),
+                'goalsScored' => $goalsScored,
+                'goalsConcede' => $goalsConcede,
+                // Можно рассчитывать 1 методом, но зачем?
                 'wins' => $this->calculationService->wins($team, $tournament),
                 'draws' => $this->calculationService->draws($team, $tournament),
                 'defeats' => $this->calculationService->defeats($team, $tournament),

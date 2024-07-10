@@ -179,4 +179,27 @@ class CalculationService
         }
         return $defeats;
     }
+
+    /** Подсчет голов команды по турниру
+     * @param Team $team Данные команды
+     * @param Tournament $tournament Данные турнира
+     * @return array Кол-во голов ['Scored', 'Concede']
+     */
+    public function goals(Team $team, Tournament $tournament):array
+    {
+        $sum = ['Scored' => 0, 'Concede' => 0];
+        $listGame = $this->DBService->listGameTournament($tournament);
+        foreach ($listGame as $game) {
+            if ($game->getTeamLeft() === $team){
+                $sum['Scored'] += $game->getGoalsScoredLeft();
+                $sum['Concede'] += $game->getGoalsScoredRight();
+            }
+            if ($game->getTeamRight() === $team){
+                $sum['Scored'] += $game->getGoalsScoredRight();
+                $sum['Concede'] += $game->getGoalsScoredLeft();                
+            }
+        }
+        return $sum;
+    }
+
 }
