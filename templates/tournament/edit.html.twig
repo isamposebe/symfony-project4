@@ -50,7 +50,7 @@
                             <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
                         </td>
                         <td>
-                            <button class="deleteGame" data-tore="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
+                            <button class="deleteGame" data-tour="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -99,12 +99,14 @@
 
         {# Удаление игры #}
         $( '.deleteGame' ).click(function() {
-            let tourID = $(this).data('tour')
+            let tourID = $(this).data('tour');
+            let gameID = $(this).data('game');
+            console.log(gameID);
             $.ajax({
                 url: '/game/delete/', // не менял
                 method: 'POST',
                 dataType: 'html',
-                data: { tourID: tourID}, // Отправляю через data
+                data: {gameID: gameID, tourID: tourID}, // Отправляю через data
                 success: function (data) {
                     // Стираем из формы
                     $('tr')
