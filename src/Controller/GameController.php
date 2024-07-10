@@ -79,7 +79,7 @@ class GameController extends AbstractController
     public function delete(Request $request, PostgresqlDBService $serviceDB): Response
     {
         /** Достаем из страницы ID игры */
-        $idGame = $request->request->get('gemeID');
+        $idGame = $request->request->get('gameID');
         /** Берем игру из базы данных по ID */
         $game = $serviceDB->searchGameByID($idGame);
         /** Удаляем игру из базы данных */
