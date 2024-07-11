@@ -130,7 +130,6 @@ class TournamentController extends AbstractController
     }
 
 
-
     /** Переход и расчет следующих турниров
      * @param Request $request Данные страницы
      * @param PostgresqlDBService $serviceDB Сервис по работе с турниром

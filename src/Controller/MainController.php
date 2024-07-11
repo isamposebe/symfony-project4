@@ -30,11 +30,11 @@ class MainController extends AbstractController
         /** Берем из базы данных турнир по ID */
         $tournament = $DBService->searchTournamentID($id);
         /** Список данных по команде с расчетами */
-        $listTeamCalculation = $DBService->listTeamCalculation($tournament);
-        dump($listTeamCalculation);
+        //$listTeamCalculation = $DBService->listTeamCalculation($tournament);
+        //dump($listTeamCalculation);
         return $this->render('main/show.html.twig', [
             'tournament' => $tournament,
-            'listTeamCalculation' => $listTeamCalculation
+            //'listTeamCalculation' => $listTeamCalculation
         ]);
     }
 }
