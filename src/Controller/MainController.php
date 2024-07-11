@@ -25,12 +25,12 @@ class MainController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'app_show')]
-    public function show(int $id, PostgresqlDBService $DBService): Response
+    public function show(int $id, PostgresqlDBService $DBService, CalculationService $calculationService): Response
     {
         /** Берем из базы данных турнир по ID */
         $tournament = $DBService->searchTournamentID($id);
         /** Список данных по команде с расчетами */
-        $listTeamCalculation = $DBService->listTeamCalculation($tournament);
+        $listTeamCalculation = $DBService->listTeamCalculation($tournament, $calculationService);
         dump($listTeamCalculation);
         return $this->render('main/show.html.twig', [
             'tournament' => $tournament,

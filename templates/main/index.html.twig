@@ -12,13 +12,6 @@
 
 <div class="example-wrapper">
 
-    <button onclick="window.location='{{ path('app_team_new') }}'" class="btn" type="submit">
-        Создать команду
-    </button>
-    <button onclick="window.location='{{ path('app_tournament_new') }}'" class="btn" type="submit">
-        Создать турнир
-    </button>
-
     {# Отоброжение турниров #}
     {% if tournamentList is empty %}
         <p>Турниров пока нет</p>
@@ -29,7 +22,7 @@
                     <p>{{ tournament.name }}</p>
                     <a></a>
                     {#0 это 1 тур в турнире #}
-                    <a href="{{ path('app_tournament_edit', {'id': tournament.id, 'numTour': 0}) }}">Edit</a>
+                    <a href="{{ path('app_show', {'id': tournament.id, 'numTour': 0}) }}">Show</a>
                 </li>
             {% endfor %}
         </ul>
