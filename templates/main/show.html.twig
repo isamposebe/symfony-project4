@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Team{% endblock %}
+
+{% block body %}
+    <h1>Show</h1>
+    <button onclick="window.location='{{ path('app_tournament') }}'">Главная</button>
+
+    {# Форма для турнира #}
+    <p id="tournamentId" data-tournament="{{ tournament.id }}">Название турнира: {{ tournament.name }}</p>
+    {% if tour.num != 0 %}
+        <p id="tourId" data-tour="{{ tour.id }}" >Номер тура: {{ tour.num }}</p>
+    {% else %}
+        <p id="tourId" data-tour="{{ tour.id }}" >Перейдите в тур</p>
+    {% endif %}
+    {# Кнопка удалить форму #}
+    {{ include('tournament/delete_form.html.twig',{'tournament': tournament }) }}
+    {% if countListTeam > tour.num + 1 %}
+        <button onclick="window.location='{{ path('app_tournament_edit', {'id': tournament.id, 'numTour': tour.num + 1}) }}'">Перейти на следующий тур</button>
+    {% endif %}
+    {% if tour.num != 0 %}
+        {# Отоброжение игр #}
+        {% if listGame is empty %}
+            <p>Игр пока нет</p>
+        {% else %}
+            <table>
+                <thead>
+                <tr>
+                    <th>Игра № </th>
+                    <th>Команда 1</th>
+                    <th>Голы Команды 1</th>
+                    <th>Команда 2</th>
+                    <th>Голы Команды 2</th>
+                    <th>Изменить значение голов</th>
+                    <th>Удаление игры</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for game in listGame %}
+                    <tr data-game="{{ game.id }}" >
+                        <th>{{ game.id }}</th>
+
+                            {% if game.TeamLeft != null %}
+                                <td>{{ game.TeamLeft.name }}</td> <td>{{ game.goalsScoredLeft }}</td>
+                            {% endif %}
+                            {% if game.TeamRight != null %}
+                                <td>{{ game.TeamRight.name }}</td> <td>{{ game.goalsScoredRight }}</td>
+                            {% endif %}
+                        <td>
+                            <button onclick="window.location='{{ path('app_game_edit', {'id': game.id}) }}'">Записать голы для игры</button>
+                        </td>
+                        <td>
+                            <button class="deleteGame" data-tour="{{ game.tour.id }}" data-game="{{ game.id }}">Удалить игру</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <a href="{{ path('app_tournament_edit',{'id': tournament.id, 'numTour': tour.num - 1}) }}">back to list</a>
+    {% else %}
+        {% if listTeam is empty %}
+            <p>Пока нет команд</p>
+        {% else %}
+            {% for team in listTeam %}
+                {% if team != null %}
+                    <div>{{ loop.index }} {{ team.name }}</div>
+                {% else %}
+                    <div>{{ loop.index }}  null</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <p>Добавлена команда:</p>
+        <div id="divNewTeam"></div>
+        {# Форма для записи команд #}
+        {{ include('_form.html.twig', {'form': formRecordingTeam}) }}
+        <button class="addTour">Генерация туров</button>
+    {% endif %}
+
+    <p id="eorrGen"></p>
+
+    <script>
+        {# Отправка POST запроса записи команды #}
+        $( ".recordingTeam" ).click(function() {
+            let nameTeam = $(".nameTeam").val();
+            let tournamentID = $('#tournamentId').data( "tournament");
+            $.ajax({
+                url: '/tournament/addTeamTournament/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {nameTeam: nameTeam, tournamentID: tournamentID}, // Отправляю через data
+                success: function (data) {
+                    $('#divNewTeam').replaceWith(data);
+                    console.log($('#divNewTeam').html());
+                }
+            });
+        });
+
+        {# Удаление игры #}
+        $( '.deleteGame' ).click(function() {
+            let tourID = $(this).data('tour');
+            let gameID = $(this).data('game');
+            console.log(gameID);
+            $.ajax({
+                url: '/game/delete/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {gameID: gameID, tourID: tourID}, // Отправляю через data
+                success: function (data) {
+                    // Стираем из формы
+                    $('tr')
+                        .filter(function (){
+                            return $(this).data('game') == data;
+                        })
+                        .remove()
+                    console.log(data);
+                }
+            });
+        });
+
+        {# Переход на следующий тур #}
+        $( ".addTour" ).click(function() {
+            let tourID = $('#tourId').data("tour");
+            $.ajax({
+                url: '/tournament/addTour/', // не менял
+                method: 'POST',
+                dataType: 'html',
+                data: {tourID: tourID}, // Отправляю через data
+                success: function (data) {
+                    console.log(data);
+                    $('#eorrGen').replaceWith("<p>" + data + "</p>");
+                }
+            });
+        });
+
+        {# Отсеживание ошибок ajax #}
+        $(document).ajaxError(function(event, xhr, options) {
+
+            switch (xhr.status){
+
+                case 403:
+
+                    alert('Requested page forbidden (404).');
+
+                    break;
+
+                case 404:
+
+                    alert('Requested page not found (404).');
+
+                    break;
+
+                case 500:
+
+                    alert('Internal Server Error (500).');
+
+                    break;
+
+            }
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TournamentController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+
+
+<div class="example-wrapper">
+
+    <button onclick="window.location='{{ path('app_team_new') }}'" class="btn" type="submit">
+        Создать команду
+    </button>
+    <button onclick="window.location='{{ path('app_tournament_new') }}'" class="btn" type="submit">
+        Создать турнир
+    </button>
+
+    {# Отоброжение турниров #}
+    {% if tournamentList is empty %}
+        <p>Турниров пока нет</p>
+    {% else %}
+        <ul>
+            {% for tournament in tournamentList %}
+                <li>
+                    <p>{{ tournament.name }}</p>
+                    <a></a>
+                    {#0 это 1 тур в турнире #}
+                    <a href="{{ path('app_tournament_edit', {'id': tournament.id, 'numTour': 0}) }}">Edit</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</div>
+{% endblock %}
