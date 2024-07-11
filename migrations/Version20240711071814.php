@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240709154645 extends AbstractMigration
+final class Version20240711071814 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,6 +20,11 @@ final class Version20240709154645 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE game_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE team_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE tour_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE tournament_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE game (id INT NOT NULL, team_right_id INT DEFAULT NULL, team_left_id INT DEFAULT NULL, tour_id INT NOT NULL, goals_scored_right INT NOT NULL, goals_scored_left INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_232B318CECD5B44B ON game (team_right_id)');
         $this->addSql('CREATE INDEX IDX_232B318C1D15BF35 ON game (team_left_id)');
@@ -55,6 +60,11 @@ final class Version20240709154645 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE game_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE team_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE tour_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE tournament_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318CECD5B44B');
         $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318C1D15BF35');
         $this->addSql('ALTER TABLE game DROP CONSTRAINT FK_232B318C15ED8D43');
