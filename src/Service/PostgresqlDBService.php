@@ -16,7 +16,6 @@ class PostgresqlDBService
      */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly CalculationService $calculationService,
     ){}
 
     /** Добавляет элемент в базу данных
@@ -223,7 +222,7 @@ class PostgresqlDBService
      * @param Tournament $tournament Данные турнира
      * @return array|string[]
      */
-    public function listTeamCalculation(Tournament $tournament):array
+    public function listTeamCalculation(Tournament $tournament,CalculationService $calculationService):array
     {
         $listTeamCalculation = [
             'location',
@@ -239,22 +238,23 @@ class PostgresqlDBService
         $tour = $this->searchTourNumOfTournament(0, $tournament);
         $listTeam = $this->listTeam($tour);
         foreach ($listTeam as $team) {
-            $goals = $this->calculationService->goals($team, $tournament);
+            $goals = $calculationService->goals($team, $tournament);
             $goalsScored = $goals['Scored'];
             $goalsConcede = $goals['Concede'];
             $listTeamCalculation = [
-                'location' => $this->calculationService->location($team, $tournament),
+                'location' => $calculationService->location($team, $tournament),
                 'name' => $team->getName(),
-                'numberMatches' => $this->calculationService->numberMatches($team, $tournament),
-                'points' => $this->calculationService->points($team, $tournament),
+                'numberMatches' => $calculationService->numberMatches($team, $tournament),
+                'points' => $calculationService->points($team, $tournament),
                 'goalsScored' => $goalsScored,
                 'goalsConcede' => $goalsConcede,
                 // Можно рассчитывать 1 методом, но зачем?
-                'wins' => $this->calculationService->wins($team, $tournament),
-                'draws' => $this->calculationService->draws($team, $tournament),
-                'defeats' => $this->calculationService->defeats($team, $tournament),
+                'wins' => $calculationService->wins($team, $tournament),
+                'draws' => $calculationService->draws($team, $tournament),
+                'defeats' => $calculationService->defeats($team, $tournament),
             ];
         }
         return $listTeamCalculation;
     }
+
 }
